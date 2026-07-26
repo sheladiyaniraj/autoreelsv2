@@ -18,9 +18,9 @@ const RESOLUTIONS: Record<ReelAspectRatio, { width: number; height: number }> = 
 };
 
 const FPS = 25;
-const FONTS_DIR = path.join(process.cwd(), "src/lib/render/fonts");
+export const FONTS_DIR = path.join(process.cwd(), "src/lib/render/fonts");
 
-function runFfmpeg(args: string[]): Promise<void> {
+export function runFfmpeg(args: string[]): Promise<void> {
   return new Promise((resolve, reject) => {
     const proc = spawn(ffmpegInstaller.path, args);
     let stderr = "";

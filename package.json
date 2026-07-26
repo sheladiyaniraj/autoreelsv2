@@ -12,6 +12,7 @@
     "@ai-sdk/elevenlabs": "^3.0.13",
     "@base-ui/react": "^1.6.0",
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "@ffprobe-installer/ffprobe": "^2.1.2",
     "@mdx-js/loader": "^3.1.1",
     "@mdx-js/react": "^3.1.1",
     "@next/mdx": "^16.2.12",

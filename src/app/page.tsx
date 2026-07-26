@@ -66,6 +66,9 @@ export default async function Home() {
           AutoReels
         </div>
         <nav className="hidden items-center gap-6 text-sm text-muted-foreground sm:flex">
+          <Link href="/tools" className="hover:text-foreground">
+            Free Tools
+          </Link>
           <Link href="/blog" className="hover:text-foreground">
             Blog
           </Link>
@@ -162,6 +165,9 @@ export default async function Home() {
 
       <footer className="border-t px-6 py-8 text-center text-sm text-muted-foreground">
         <div className="mb-3 flex justify-center gap-6">
+          <Link href="/tools" className="hover:text-foreground">
+            Free Tools
+          </Link>
           <Link href="/blog" className="hover:text-foreground">
             Blog
           </Link>

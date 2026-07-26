@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: path.join(__dirname),
   },
-  serverExternalPackages: ["@ffmpeg-installer/ffmpeg"],
+  serverExternalPackages: ["@ffmpeg-installer/ffmpeg", "@ffprobe-installer/ffprobe"],
   outputFileTracingIncludes: {
     // Broad glob: the ffmpeg compose step now runs inside a Workflow SDK
     // step handler (an internally-generated route under

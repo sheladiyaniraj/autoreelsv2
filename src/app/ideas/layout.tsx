@@ -11,6 +11,9 @@ export default function IdeasLayout({ children }: { children: React.ReactNode })
           AutoReels
         </Link>
         <div className="flex items-center gap-4">
+          <Link href="/tools" className="hidden text-sm text-muted-foreground hover:text-foreground sm:inline">
+            Free Tools
+          </Link>
           <Link href="/blog" className="hidden text-sm text-muted-foreground hover:text-foreground sm:inline">
             Blog
           </Link>
@@ -27,6 +30,9 @@ export default function IdeasLayout({ children }: { children: React.ReactNode })
         <div className="mb-3 flex justify-center gap-6">
           <Link href="/" className="hover:text-foreground">
             Home
+          </Link>
+          <Link href="/tools" className="hover:text-foreground">
+            Free Tools
           </Link>
           <Link href="/blog" className="hover:text-foreground">
             Blog

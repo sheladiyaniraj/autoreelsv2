@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Clapperboard, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export default function BlogLayout({ children }: { children: React.ReactNode }) {
+export default function ToolsLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-svh flex-col">
       <header className="flex items-center justify-between px-6 py-4">
@@ -11,11 +11,8 @@ export default function BlogLayout({ children }: { children: React.ReactNode }) 
           AutoReels
         </Link>
         <div className="flex items-center gap-4">
-          <Link href="/tools" className="hidden text-sm text-muted-foreground hover:text-foreground sm:inline">
-            Free Tools
-          </Link>
-          <Link href="/ideas" className="hidden text-sm text-muted-foreground hover:text-foreground sm:inline">
-            Reel Ideas
+          <Link href="/blog" className="hidden text-sm text-muted-foreground hover:text-foreground sm:inline">
+            Blog
           </Link>
           <Button size="sm" nativeButton={false} render={<Link href="/signup" />}>
             <Sparkles className="size-4" />
@@ -24,15 +21,15 @@ export default function BlogLayout({ children }: { children: React.ReactNode }) 
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-12">{children}</main>
+      <main className="mx-auto w-full max-w-2xl flex-1 px-6 py-12">{children}</main>
 
       <footer className="border-t px-6 py-8 text-center text-sm text-muted-foreground">
         <div className="mb-3 flex justify-center gap-6">
           <Link href="/" className="hover:text-foreground">
             Home
           </Link>
-          <Link href="/tools" className="hover:text-foreground">
-            Free Tools
+          <Link href="/blog" className="hover:text-foreground">
+            Blog
           </Link>
           <Link href="/ideas" className="hover:text-foreground">
             Reel Ideas
