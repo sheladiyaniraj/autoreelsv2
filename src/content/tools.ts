@@ -30,6 +30,16 @@ export const TOOLS: Tool[] = [
     name: "Video Caption Generator",
     description: "Upload a video and get it back with burned-in, karaoke-style captions.",
   },
+  {
+    slug: "youtube-downloader",
+    name: "YouTube Video Downloader",
+    description: "Paste a YouTube URL and download the video as an MP4, up to 1080p.",
+  },
+  {
+    slug: "instagram-downloader",
+    name: "Instagram Reel Downloader",
+    description: "Paste an Instagram Reel URL and download it as an MP4.",
+  },
 ];
 
 export function getTool(slug: string): Tool | undefined {

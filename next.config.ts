@@ -13,7 +13,10 @@ const nextConfig: NextConfig = {
     // Broad glob: the ffmpeg compose step now runs inside a Workflow SDK
     // step handler (an internally-generated route under
     // .well-known/workflow/), not a fixed route we can key on directly.
-    "**/*": ["./src/lib/render/fonts/**"],
+    // Also includes the yt-dlp binary fetched by scripts/download-yt-dlp.mjs
+    // at install time — Next's file tracer can't see it since it's invoked
+    // via child_process.spawn(), not require()/import.
+    "**/*": ["./src/lib/render/fonts/**", "./bin/yt-dlp"],
   },
 };
 

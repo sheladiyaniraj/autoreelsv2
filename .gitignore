@@ -45,3 +45,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 /.swc
+
+# downloaded at install time by scripts/download-yt-dlp.mjs — always fresh
+# per install/deploy, never committed
+/bin/
