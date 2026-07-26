@@ -7,6 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
+// Share links are the exact kind of page that can get bursty traffic from a
+// single social post — caching for a few minutes means repeat/viral hits
+// don't each re-query the DB. Short enough that an owner editing a reel
+// right after sharing it won't show stale content for long.
+export const revalidate = 300;
+
 const ASPECT_CLASS: Record<string, string> = {
   "9:16": "aspect-9/16",
   "1:1": "aspect-square",

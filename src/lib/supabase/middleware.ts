@@ -60,7 +60,12 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (user && isAuthRoute) {
+  // Logged-in-user redirect for "/" lives here (not in page.tsx) so the
+  // marketing homepage itself can stay a plain static component with no
+  // per-request Supabase call — that's what let it move from ~350-700ms
+  // dynamic renders to a cached, edge-served ~130ms response for the
+  // anonymous visitors who are the overwhelming majority of its traffic.
+  if (user && (isAuthRoute || request.nextUrl.pathname === "/")) {
     const url = request.nextUrl.clone();
     url.pathname = "/dashboard";
     return NextResponse.redirect(url);

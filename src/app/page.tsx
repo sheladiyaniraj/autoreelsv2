@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import {
   Captions,
   Clapperboard,
@@ -8,7 +7,6 @@ import {
   Music,
   Sparkles,
 } from "lucide-react";
-import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { SUBSCRIPTION_PLANS, type PlanKey } from "@/lib/billing/plans";
@@ -48,16 +46,7 @@ const FEATURES = [
 
 const PLAN_ORDER: PlanKey[] = ["starter", "pro"];
 
-export default async function Home() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (user) {
-    redirect("/dashboard");
-  }
-
+export default function Home() {
   return (
     <div className="flex min-h-svh flex-col">
       <header className="flex items-center justify-between px-6 py-4">
