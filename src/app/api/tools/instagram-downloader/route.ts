@@ -32,7 +32,8 @@ export async function POST(request: Request) {
         "Content-Disposition": `attachment; filename="${filename}"`,
       },
     });
-  } catch {
+  } catch (err) {
+    console.error("instagram-downloader failed:", err);
     return NextResponse.json(
       { error: "Couldn't download that reel — it may be private or unavailable" },
       { status: 500 }

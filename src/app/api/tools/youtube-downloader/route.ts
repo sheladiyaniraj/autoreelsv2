@@ -32,7 +32,8 @@ export async function POST(request: Request) {
         "Content-Disposition": `attachment; filename="${filename}"`,
       },
     });
-  } catch {
+  } catch (err) {
+    console.error("youtube-downloader failed:", err);
     return NextResponse.json(
       { error: "Couldn't download that video — it may be private, age-restricted, or unavailable" },
       { status: 500 }
