@@ -80,11 +80,11 @@ export default function Home() {
       </header>
 
       <main className="flex flex-1 flex-col">
-        <section className="flex flex-col items-center justify-center gap-6 px-6 py-20 text-center">
-          <h1 className="max-w-2xl text-4xl font-semibold tracking-tight sm:text-5xl">
+        <section className="flex flex-col items-center justify-center gap-6 px-6 py-12 text-center sm:py-20">
+          <h1 className="max-w-2xl text-3xl font-semibold tracking-tight sm:text-5xl">
             Turn any topic into a faceless reel — no filming, no editing.
           </h1>
-          <p className="max-w-xl text-lg text-muted-foreground">
+          <p className="max-w-xl text-base text-muted-foreground sm:text-lg">
             AI script, voiceover, B-roll, captions, and music — ready to
             download or publish to Instagram, TikTok, and YouTube Shorts.
           </p>
