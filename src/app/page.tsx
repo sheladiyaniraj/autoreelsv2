@@ -1,65 +1,160 @@
-import Image from "next/image";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import {
+  Captions,
+  Clapperboard,
+  Layers,
+  Mic,
+  Music,
+  Sparkles,
+} from "lucide-react";
+import { createClient } from "@/lib/supabase/server";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { SUBSCRIPTION_PLANS, type PlanKey } from "@/lib/billing/plans";
 
-export default function Home() {
+const FEATURES = [
+  {
+    icon: Sparkles,
+    title: "AI script from any topic",
+    description: "Give it a topic, a URL, or your own script — get a hook-first, scroll-stopping voiceover script in seconds.",
+  },
+  {
+    icon: Mic,
+    title: "Natural voiceover",
+    description: "Pick from OpenAI and ElevenLabs voices with real previews before you commit.",
+  },
+  {
+    icon: Layers,
+    title: "AI B-roll, per scene",
+    description: "Choose Flux or Google's Nano Banana 2 to generate matching visuals for every scene automatically.",
+  },
+  {
+    icon: Captions,
+    title: "Karaoke-style captions",
+    description: "Word-by-word highlighted captions burned in, styled to match your template.",
+  },
+  {
+    icon: Music,
+    title: "Auto-ducked music",
+    description: "Background music that automatically ducks under your voiceover — no mixing required.",
+  },
+  {
+    icon: Clapperboard,
+    title: "Edit after generating",
+    description: "Swap a scene's visual, change the voice, or restore a previous version — without starting over.",
+  },
+];
+
+const PLAN_ORDER: PlanKey[] = ["starter", "pro"];
+
+export default async function Home() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    redirect("/dashboard");
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="flex min-h-svh flex-col">
+      <header className="flex items-center justify-between px-6 py-4">
+        <div className="flex items-center gap-2 font-semibold">
+          <Clapperboard className="size-5 text-primary" />
+          AutoReels
+        </div>
+        <div className="flex gap-2">
+          <Button
+            variant="ghost"
+            nativeButton={false}
+            render={<Link href="/login" />}
+          >
+            Log in
+          </Button>
+          <Button nativeButton={false} render={<Link href="/signup" />}>
+            Sign up free
+          </Button>
+        </div>
+      </header>
+
+      <main className="flex flex-1 flex-col">
+        <section className="flex flex-col items-center justify-center gap-6 px-6 py-20 text-center">
+          <h1 className="max-w-2xl text-4xl font-semibold tracking-tight sm:text-5xl">
+            Turn any topic into a faceless reel — no filming, no editing.
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="max-w-xl text-lg text-muted-foreground">
+            AI script, voiceover, B-roll, captions, and music — ready to
+            download or publish to Instagram, TikTok, and YouTube Shorts.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Button
+            size="lg"
+            nativeButton={false}
+            render={<Link href="/signup" />}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+            Get 3 free reels
+          </Button>
+        </section>
+
+        <section className="mx-auto w-full max-w-5xl px-6 py-16">
+          <h2 className="mb-8 text-center text-2xl font-semibold">
+            Everything you need, generated automatically
+          </h2>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {FEATURES.map((feature) => (
+              <Card key={feature.title}>
+                <CardHeader>
+                  <feature.icon className="mb-2 size-6 text-primary" />
+                  <CardTitle className="text-base">{feature.title}</CardTitle>
+                  <CardDescription>{feature.description}</CardDescription>
+                </CardHeader>
+              </Card>
+            ))}
+          </div>
+        </section>
+
+        <section className="mx-auto w-full max-w-3xl px-6 py-16">
+          <h2 className="mb-8 text-center text-2xl font-semibold">
+            Simple pricing
+          </h2>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <Card>
+              <CardHeader>
+                <CardTitle>Free</CardTitle>
+                <CardDescription>$0/mo · 3 credits on signup</CardDescription>
+              </CardHeader>
+            </Card>
+            {PLAN_ORDER.map((key) => {
+              const plan = SUBSCRIPTION_PLANS[key];
+              return (
+                <Card key={key}>
+                  <CardHeader>
+                    <CardTitle>{plan.name}</CardTitle>
+                    <CardDescription>
+                      {plan.priceLabel} · {plan.credits} credits/mo
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+              );
+            })}
+          </div>
+          <p className="mt-4 text-center text-sm text-muted-foreground">
+            No watermark on paid plans. Cancel anytime.
+          </p>
+        </section>
+
+        <section className="flex flex-col items-center gap-4 px-6 py-16 text-center">
+          <h2 className="text-2xl font-semibold">Ready to make your first reel?</h2>
+          <Button size="lg" nativeButton={false} render={<Link href="/signup" />}>
+            Get started free
+          </Button>
+        </section>
       </main>
+
+      <footer className="border-t px-6 py-8 text-center text-sm text-muted-foreground">
+        © {new Date().getFullYear()} AutoReels. All rights reserved.
+      </footer>
     </div>
   );
 }
