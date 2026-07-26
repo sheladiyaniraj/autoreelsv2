@@ -1,8 +1,7 @@
 import type { MetadataRoute } from "next";
 import { BLOG_SLUGS } from "@/content/blog/posts";
 import { NICHES } from "@/content/niches";
-
-const BASE_URL = "https://autoreels-one.vercel.app";
+import { SITE_URL as BASE_URL } from "@/lib/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes: MetadataRoute.Sitemap = [

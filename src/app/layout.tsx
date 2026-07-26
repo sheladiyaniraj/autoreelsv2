@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { Toaster } from "@/components/ui/sonner";
+import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -19,7 +20,7 @@ const description =
   "Turn a topic, script, or URL into a finished faceless short-form video with AI voiceover, captions, B-roll, and music. Free to try.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://autoreels-one.vercel.app"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: title,
     template: "%s — AutoReels",
