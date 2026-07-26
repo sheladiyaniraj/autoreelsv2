@@ -84,6 +84,7 @@ export default async function SharePage({
           autoPlay
           muted
           loop
+          preload="auto"
           className={cn("w-full bg-black", ASPECT_CLASS[reel.aspect_ratio] ?? "aspect-9/16")}
         />
       </Card>
