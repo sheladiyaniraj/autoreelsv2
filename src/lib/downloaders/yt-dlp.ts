@@ -17,7 +17,7 @@ const MAX_FILESIZE = "150M";
 // bot"). The android player client uses a different verification path
 // that's typically not subject to that same check. Harmless no-op for
 // non-YouTube extractors (e.g. Instagram), so always included.
-const EXTRACTOR_ARGS = ["--extractor-args", "youtube:player_client=android"];
+const EXTRACTOR_ARGS = ["--extractor-args", "youtube:player_client=tv"];
 
 function runYtDlp(args: string[]): Promise<{ stdout: string; stderr: string }> {
   return new Promise((resolve, reject) => {
