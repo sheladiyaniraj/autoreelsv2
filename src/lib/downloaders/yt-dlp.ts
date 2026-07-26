@@ -12,6 +12,13 @@ const YT_DLP_PATH = path.join(process.cwd(), "bin/yt-dlp");
 const FORMAT_SELECTOR = "best[height<=1080][ext=mp4]/best[height<=1080]/best";
 const MAX_FILESIZE = "150M";
 
+// YouTube's bot-detection flags Vercel's datacenter IPs much more
+// aggressively than residential ones ("Sign in to confirm you're not a
+// bot"). The android player client uses a different verification path
+// that's typically not subject to that same check. Harmless no-op for
+// non-YouTube extractors (e.g. Instagram), so always included.
+const EXTRACTOR_ARGS = ["--extractor-args", "youtube:player_client=android"];
+
 function runYtDlp(args: string[]): Promise<{ stdout: string; stderr: string }> {
   return new Promise((resolve, reject) => {
     const proc = spawn(YT_DLP_PATH, args);
@@ -37,7 +44,13 @@ export type MediaInfo = {
 };
 
 export async function getMediaInfo(url: string): Promise<MediaInfo> {
-  const { stdout } = await runYtDlp(["-j", "--no-warnings", "--skip-download", url]);
+  const { stdout } = await runYtDlp([
+    ...EXTRACTOR_ARGS,
+    "-j",
+    "--no-warnings",
+    "--skip-download",
+    url,
+  ]);
   const data = JSON.parse(stdout) as {
     title?: string;
     thumbnail?: string;
@@ -60,6 +73,7 @@ export async function downloadMedia(
     // --print outputs the title to stdout as part of the same invocation,
     // avoiding a second yt-dlp/network round-trip just to name the file.
     const { stdout } = await runYtDlp([
+      ...EXTRACTOR_ARGS,
       "--ffmpeg-location",
       ffmpegInstaller.path,
       "-f",
