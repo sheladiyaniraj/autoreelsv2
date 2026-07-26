@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { requireAdminUser } from "@/lib/admin";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { SUBSCRIPTION_PLANS, CREDIT_PACKS } from "@/lib/billing/plans";
+import { estimateReelCost } from "@/lib/cost-estimates";
 
 function parsePriceUsd(priceLabel: string): number {
   const match = priceLabel.match(/\$(\d+(?:\.\d+)?)/);
@@ -27,6 +28,9 @@ export default async function AdminOverviewPage() {
     { count: reelsFailed },
     { count: activeSubs },
     { data: recentPurchases },
+    { data: readyReels },
+    { data: voices },
+    { data: allScenes },
   ] = await Promise.all([
     admin.from("users").select("id", { count: "exact", head: true }),
     admin.from("reels").select("id", { count: "exact", head: true }).eq("status", "ready"),
@@ -41,6 +45,9 @@ export default async function AdminOverviewPage() {
       .select("delta, reason, created_at")
       .in("reason", ["credit_pack_purchase", "subscription_credit_grant"])
       .gte("created_at", thirtyDaysAgo),
+    admin.from("reels").select("id, image_model, duration, voice_id, words_json").eq("status", "ready"),
+    admin.from("voices").select("id, provider"),
+    admin.from("scenes").select("reel_id"),
   ]);
 
   // Revenue is estimated from local ledger amounts against known static
@@ -61,6 +68,28 @@ export default async function AdminOverviewPage() {
     return sum + (price ?? 0);
   }, 0);
 
+  // AI generation cost is estimated from per-unit provider prices against
+  // each reel's actual scene count, duration, voice provider, and image
+  // model — not a live billing reconciliation, just an internal cost
+  // signal. See src/lib/cost-estimates.ts for the underlying rates.
+  const voiceProviderById = new Map((voices ?? []).map((v) => [v.id, v.provider]));
+  const sceneCountByReel = new Map<string, number>();
+  for (const scene of allScenes ?? []) {
+    sceneCountByReel.set(scene.reel_id, (sceneCountByReel.get(scene.reel_id) ?? 0) + 1);
+  }
+
+  const reelCosts = (readyReels ?? []).map((reel) =>
+    estimateReelCost({
+      imageModel: reel.image_model,
+      voiceProvider: reel.voice_id ? (voiceProviderById.get(reel.voice_id) ?? null) : null,
+      sceneCount: sceneCountByReel.get(reel.id) ?? 0,
+      durationSeconds: reel.duration,
+      wordCount: Array.isArray(reel.words_json) ? reel.words_json.length : 0,
+    })
+  );
+  const totalCost = reelCosts.reduce((sum, c) => sum + c, 0);
+  const avgCostPerReel = reelCosts.length > 0 ? totalCost / reelCosts.length : 0;
+
   const stats = [
     { label: "Total users", value: userCount ?? 0 },
     { label: "Reels ready", value: reelsReady ?? 0 },
@@ -68,6 +97,8 @@ export default async function AdminOverviewPage() {
     { label: "Reels failed", value: reelsFailed ?? 0 },
     { label: "Active subscriptions", value: activeSubs ?? 0 },
     { label: "Est. revenue (30d)", value: `$${revenueLast30d.toFixed(0)}` },
+    { label: "Avg. AI cost / reel", value: `$${avgCostPerReel.toFixed(3)}` },
+    { label: "Total est. AI cost (all reels)", value: `$${totalCost.toFixed(2)}` },
   ];
 
   return (
@@ -87,6 +118,12 @@ export default async function AdminOverviewPage() {
           </Card>
         ))}
       </div>
+
+      <p className="text-xs text-muted-foreground">
+        Revenue and AI cost figures are estimates from local ledger data and
+        known per-unit provider prices, not live billing reconciliation —
+        useful as a directional signal, not exact accounting.
+      </p>
 
       <Card>
         <CardContent className="pt-6 text-sm text-muted-foreground">
