@@ -65,6 +65,14 @@ export default async function Home() {
           <Clapperboard className="size-5 text-primary" />
           AutoReels
         </div>
+        <nav className="hidden items-center gap-6 text-sm text-muted-foreground sm:flex">
+          <Link href="/blog" className="hover:text-foreground">
+            Blog
+          </Link>
+          <Link href="/ideas" className="hover:text-foreground">
+            Reel Ideas
+          </Link>
+        </nav>
         <div className="flex gap-2">
           <Button
             variant="ghost"
@@ -153,6 +161,17 @@ export default async function Home() {
       </main>
 
       <footer className="border-t px-6 py-8 text-center text-sm text-muted-foreground">
+        <div className="mb-3 flex justify-center gap-6">
+          <Link href="/blog" className="hover:text-foreground">
+            Blog
+          </Link>
+          <Link href="/ideas" className="hover:text-foreground">
+            Reel Ideas
+          </Link>
+          <Link href="/login" className="hover:text-foreground">
+            Log in
+          </Link>
+        </div>
         © {new Date().getFullYear()} AutoReels. All rights reserved.
       </footer>
     </div>

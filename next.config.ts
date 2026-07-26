@@ -1,8 +1,10 @@
 import path from "node:path";
 import type { NextConfig } from "next";
+import createMDX from "@next/mdx";
 import { withWorkflow } from "workflow/next";
 
 const nextConfig: NextConfig = {
+  pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
   turbopack: {
     root: path.join(__dirname),
   },
@@ -15,4 +17,12 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withWorkflow(nextConfig);
+const withMDX = createMDX({
+  options: {
+    // String plugin refs (not inline options objects) so Turbopack can
+    // pass them through — inline options can't cross the JS/Rust boundary.
+    remarkPlugins: ["remark-gfm"],
+  },
+});
+
+export default withWorkflow(withMDX(nextConfig));

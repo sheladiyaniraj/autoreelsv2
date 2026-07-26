@@ -33,20 +33,26 @@ export async function updateSession(request: NextRequest) {
     request.nextUrl.pathname.startsWith("/login") ||
     request.nextUrl.pathname.startsWith("/signup") ||
     request.nextUrl.pathname.startsWith("/auth");
-  const isApiRoute = request.nextUrl.pathname.startsWith("/api");
-  const isShareRoute = request.nextUrl.pathname.startsWith("/share");
-  // Every route under the (app) layout group requires auth — allowlisting
-  // just "/dashboard" and "/create" here let /billing, /library, and
-  // /reels/[id] fall through to the page render unauthenticated, which
-  // still correctly redirects (the (app) layout has its own check) but only
-  // after throwing on `user!.id` in the page's data-fetch first, showing up
-  // as noisy TypeErrors in production logs instead of a clean edge redirect.
-  // API routes are excluded — they do their own auth (401 JSON, not a
-  // redirect), and some (e.g. the Stripe webhook) never have a user session.
-  // /share/[id] is a deliberately public, unauthenticated page.
-  const isPublicRoute =
-    request.nextUrl.pathname === "/" || isAuthRoute || isApiRoute || isShareRoute;
-  const isProtectedRoute = !isPublicRoute;
+
+  // This app is mostly public (marketing home, blog, share pages, pSEO
+  // pages, ...) with a small, fixed set of actually-private routes under
+  // the (app) layout group. An allowlist of *protected* prefixes is safer
+  // here than an allowlist of *public* ones — every new public route (blog
+  // posts, /share/[id], /ideas/[niche], ...) just works with no middleware
+  // change needed, instead of silently 307-redirecting to /login until
+  // someone notices (this has already bitten /billing, /library,
+  // /opengraph-image, and /blog in earlier passes).
+  const PROTECTED_PREFIXES = [
+    "/dashboard",
+    "/create",
+    "/library",
+    "/billing",
+    "/admin",
+    "/reels",
+  ];
+  const isProtectedRoute = PROTECTED_PREFIXES.some((prefix) =>
+    request.nextUrl.pathname.startsWith(prefix)
+  );
 
   if (!user && isProtectedRoute) {
     const url = request.nextUrl.clone();
