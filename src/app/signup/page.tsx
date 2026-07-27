@@ -24,7 +24,9 @@ export default async function SignupPage({
   // whichever page the visitor actually clicked "Sign up" from) and
   // threaded through as a hidden field, since by the time the form POSTs
   // as a Server Action the Referer would just say "/signup" itself.
-  const signupSource = extractSignupSource((await headers()).get("referer"));
+  const refererHeader = (await headers()).get("referer");
+  console.log("[signup debug] raw referer header:", refererHeader);
+  const signupSource = extractSignupSource(refererHeader);
 
   return (
     <div className="flex min-h-svh items-center justify-center p-6">
