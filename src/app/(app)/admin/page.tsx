@@ -50,6 +50,10 @@ export default async function AdminOverviewPage() {
     admin.from("scenes").select("reel_id"),
   ]);
 
+  const { count: emailLeads } = await admin
+    .from("email_leads")
+    .select("id", { count: "exact", head: true });
+
   // Revenue is estimated from local ledger amounts against known static
   // prices (not a live Stripe balance query) — good enough for a quick
   // internal signal, not accounting.
@@ -96,6 +100,7 @@ export default async function AdminOverviewPage() {
     { label: "Reels in progress", value: reelsProcessing ?? 0 },
     { label: "Reels failed", value: reelsFailed ?? 0 },
     { label: "Active subscriptions", value: activeSubs ?? 0 },
+    { label: "Free tool email leads", value: emailLeads ?? 0 },
     { label: "Est. revenue (30d)", value: `$${revenueLast30d.toFixed(0)}` },
     { label: "Avg. AI cost / reel", value: `$${avgCostPerReel.toFixed(3)}` },
     { label: "Total est. AI cost (all reels)", value: `$${totalCost.toFixed(2)}` },
@@ -130,6 +135,10 @@ export default async function AdminOverviewPage() {
           Manage individual users, credits, and bans on the{" "}
           <a href="/admin/users" className="underline">
             Users
+          </a>{" "}
+          page, or see who signed up for tool updates on the{" "}
+          <a href="/admin/leads" className="underline">
+            Leads
           </a>{" "}
           page.
         </CardContent>
