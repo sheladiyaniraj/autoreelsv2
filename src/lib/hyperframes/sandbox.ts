@@ -13,6 +13,12 @@ export const SNAPSHOT_TTL_MS = 7 * 24 * 3600 * 1000;
 const SANDBOX_OPTS = { runtime: "node22", resources: { vcpus: 4 } } as const;
 
 const pointerKey = (deploymentId: string) => `hyperframes-snapshot-cache/${deploymentId}.json`;
+// Tracks whichever snapshot is currently "latest" across deploys — read
+// before overwriting so the deploy script can delete the one it's
+// replacing. Without this, every deploy leaves its snapshot behind forever
+// (only the 7-day TTL ever reclaims it), which is exactly what blew through
+// the Hobby plan's Snapshot Storage quota after a run of frequent deploys.
+const LATEST_POINTER_KEY = "hyperframes-snapshot-cache/latest.json";
 
 type RunCommandOpts = Parameters<Sandbox["runCommand"]>[0];
 
@@ -71,14 +77,32 @@ export async function writeSnapshotPointer(params: {
   deploymentId: string;
   snapshotId: string;
   token: string;
-}): Promise<void> {
-  await put(pointerKey(params.deploymentId), JSON.stringify({ snapshotId: params.snapshotId }), {
-    access: "public",
+}): Promise<{ previousSnapshotId: string | null }> {
+  let previousSnapshotId: string | null = null;
+  try {
+    const existing = await get(LATEST_POINTER_KEY, { access: "public", token: params.token });
+    if (existing && existing.statusCode === 200) {
+      const parsed = (await new Response(existing.stream).json()) as { snapshotId: string };
+      if (parsed.snapshotId !== params.snapshotId) previousSnapshotId = parsed.snapshotId;
+    }
+  } catch {
+    // No "latest" pointer yet — first-ever deploy, nothing to clean up.
+  }
+
+  const jsonBody = JSON.stringify({ snapshotId: params.snapshotId });
+  const putOpts = {
+    access: "public" as const,
     contentType: "application/json",
     addRandomSuffix: false,
     allowOverwrite: true,
     token: params.token,
-  });
+  };
+  await Promise.all([
+    put(pointerKey(params.deploymentId), jsonBody, putOpts),
+    put(LATEST_POINTER_KEY, jsonBody, putOpts),
+  ]);
+
+  return { previousSnapshotId };
 }
 
 async function readSnapshotId(deploymentId: string, token: string): Promise<string> {
