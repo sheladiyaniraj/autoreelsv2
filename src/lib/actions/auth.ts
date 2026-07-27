@@ -51,6 +51,27 @@ export async function signUpWithPassword(formData: FormData) {
   redirect("/dashboard");
 }
 
+export async function signInWithMagicLink(formData: FormData) {
+  const email = String(formData.get("email") ?? "");
+  const page = formData.get("page") === "signup" ? "/signup" : "/login";
+  const origin = (await headers()).get("origin");
+
+  const supabase = await createClient();
+  // signInWithOtp creates the user automatically if they don't exist yet,
+  // so this one flow covers both first-time signup and returning login —
+  // no separate "magic link signup" action needed.
+  const { error } = await supabase.auth.signInWithOtp({
+    email,
+    options: { emailRedirectTo: `${origin}/auth/callback` },
+  });
+
+  if (error) {
+    redirect(`${page}?error=${encodeURIComponent(error.message)}`);
+  }
+
+  redirect(`${page}?magicSent=${encodeURIComponent(email)}`);
+}
+
 export async function signInWithGoogle() {
   const origin = (await headers()).get("origin");
   const supabase = await createClient();

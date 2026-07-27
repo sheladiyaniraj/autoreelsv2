@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { headers } from "next/headers";
+import { Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,15 +12,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { signInWithGoogle, signUpWithPassword } from "@/lib/actions/auth";
+import {
+  signInWithGoogle,
+  signInWithMagicLink,
+  signUpWithPassword,
+} from "@/lib/actions/auth";
 import { extractSignupSource } from "@/lib/site";
 
 export default async function SignupPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; ref?: string }>;
+  searchParams: Promise<{ error?: string; ref?: string; magicSent?: string }>;
 }) {
-  const { error, ref } = await searchParams;
+  const { error, ref, magicSent } = await searchParams;
   // Captured here (page load, when the Referer header still points at
   // whichever page the visitor actually clicked "Sign up" from) and
   // threaded through as a hidden field, since by the time the form POSTs
@@ -44,6 +49,12 @@ export default async function SignupPage({
               {error}
             </p>
           )}
+          {magicSent && (
+            <p className="flex items-center gap-2 rounded-md border bg-muted/30 px-3 py-2.5 text-sm text-muted-foreground">
+              <Mail className="size-4 shrink-0 text-primary" />
+              Check <strong className="text-foreground">{magicSent}</strong> for a sign-in link.
+            </p>
+          )}
           <form action={signInWithGoogle}>
             <Button type="submit" variant="outline" className="w-full">
               Continue with Google
@@ -56,6 +67,29 @@ export default async function SignupPage({
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-card px-2 text-muted-foreground">
                 Or continue with email
+              </span>
+            </div>
+          </div>
+          <form action={signInWithMagicLink} className="flex gap-2">
+            <input type="hidden" name="page" value="signup" />
+            <Input
+              name="email"
+              type="email"
+              placeholder="you@example.com"
+              autoComplete="email"
+              required
+            />
+            <Button type="submit" variant="outline" className="shrink-0">
+              Send link
+            </Button>
+          </form>
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-card px-2 text-muted-foreground">
+                Or use a password
               </span>
             </div>
           </div>
