@@ -136,6 +136,10 @@ export default async function AdminOverviewPage() {
           <a href="/admin/users" className="underline">
             Users
           </a>{" "}
+          page, browse every generated reel on the{" "}
+          <a href="/admin/reels" className="underline">
+            Reels
+          </a>{" "}
           page, or see who signed up for tool updates on the{" "}
           <a href="/admin/leads" className="underline">
             Leads
