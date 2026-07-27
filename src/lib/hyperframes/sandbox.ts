@@ -60,7 +60,11 @@ export async function prepareSandbox(sandbox: Sandbox): Promise<void> {
 }
 
 export async function createFreshSetupSandbox(): Promise<Sandbox> {
-  return Sandbox.create({ ...SANDBOX_OPTS, timeout: SNAPSHOT_SETUP_TIMEOUT_MS });
+  // persistent: false — this script takes its own explicit .snapshot() call
+  // below; without this, stop() would also auto-snapshot the filesystem for
+  // resume, doubling storage for no benefit (nothing ever resumes this
+  // specific sandbox — every render restores fresh from the explicit one).
+  return Sandbox.create({ ...SANDBOX_OPTS, timeout: SNAPSHOT_SETUP_TIMEOUT_MS, persistent: false });
 }
 
 export async function writeSnapshotPointer(params: {
@@ -90,6 +94,12 @@ async function restoreOrCreate(): Promise<Sandbox> {
   const deploymentId = process.env.VERCEL_DEPLOYMENT_ID;
   const token = process.env.BLOB_READ_WRITE_TOKEN;
 
+  // persistent: false on both paths below — every render restores fresh
+  // from the SAME shared snapshot, never resumes a specific prior render's
+  // sandbox, so there's nothing to auto-snapshot for later. Without this,
+  // stop() (in renderCompositionInSandbox's finally) silently snapshots the
+  // filesystem on every single render — this is what blew through the
+  // Hobby plan's Snapshot Storage limit.
   if (deploymentId && token) {
     try {
       const snapshotId = await readSnapshotId(deploymentId, token);
@@ -97,6 +107,7 @@ async function restoreOrCreate(): Promise<Sandbox> {
         source: { type: "snapshot", snapshotId },
         timeout: RENDER_TIMEOUT_MS,
         resources: SANDBOX_OPTS.resources,
+        persistent: false,
       });
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
@@ -107,7 +118,7 @@ async function restoreOrCreate(): Promise<Sandbox> {
     }
   }
 
-  const sandbox = await Sandbox.create({ ...SANDBOX_OPTS, timeout: RENDER_TIMEOUT_MS });
+  const sandbox = await Sandbox.create({ ...SANDBOX_OPTS, timeout: RENDER_TIMEOUT_MS, persistent: false });
   await prepareSandbox(sandbox);
   return sandbox;
 }
