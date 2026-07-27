@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && tsx scripts/create-hyperframes-snapshot.ts",
     "start": "next start",
     "lint": "eslint",
     "postinstall": "node scripts/download-yt-dlp.mjs"
@@ -25,6 +25,7 @@
     "@types/mdx": "^2.0.14",
     "@vercel/analytics": "^2.0.1",
     "@vercel/blob": "^2.6.1",
+    "@vercel/sandbox": "^2.9.0",
     "@workflow/next": "^4.1.2",
     "ai": "^7.0.37",
     "class-variance-authority": "^0.7.1",
@@ -56,6 +57,7 @@
     "eslint-config-next": "16.2.11",
     "playwright": "^1.62.0",
     "tailwindcss": "^4",
+    "tsx": "^4.23.1",
     "typescript": "^5"
   }
 }

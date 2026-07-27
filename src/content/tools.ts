@@ -40,6 +40,11 @@ export const TOOLS: Tool[] = [
     name: "Instagram Reel Downloader",
     description: "Paste an Instagram Reel URL and download it as an MP4.",
   },
+  {
+    slug: "quote-video-maker",
+    name: "Quote & Stat Video Maker",
+    description: "Turn a quote or stat into a short, animated vertical video card.",
+  },
 ];
 
 export function getTool(slug: string): Tool | undefined {
