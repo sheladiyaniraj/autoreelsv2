@@ -2,7 +2,13 @@ import { NextResponse } from "next/server";
 import { track } from "@vercel/analytics/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { notifySlackSignup } from "@/lib/slack";
+import { notifySignup } from "@/lib/slack";
+
+function describeAuthMethod(provider: string | undefined): string {
+  if (provider === "google") return "google";
+  if (provider === "email") return "magiclink";
+  return provider ?? "unknown";
+}
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
@@ -10,6 +16,7 @@ export async function GET(request: Request) {
   const next = searchParams.get("next") ?? "/dashboard";
   const ref = searchParams.get("ref");
   const source = searchParams.get("source") ?? "direct";
+  const country = request.headers.get("x-vercel-ip-country");
 
   if (code) {
     const supabase = await createClient();
@@ -22,8 +29,8 @@ export async function GET(request: Request) {
       // new user."
       const isNewUser = Date.now() - new Date(data.user.created_at).getTime() < 10_000;
       if (isNewUser) {
+        const admin = createAdminClient();
         if (ref) {
-          const admin = createAdminClient();
           await admin.rpc("redeem_referral", {
             p_referred_id: data.user.id,
             p_referral_code: ref,
@@ -31,7 +38,16 @@ export async function GET(request: Request) {
         }
         await track("signup", { referred: Boolean(ref), source });
         if (data.user.email) {
-          await notifySlackSignup({ email: data.user.email, source, referred: Boolean(ref) });
+          const { count: totalUsers } = await admin
+            .from("users")
+            .select("id", { count: "exact", head: true });
+          await notifySignup({
+            email: data.user.email,
+            method: describeAuthMethod(data.user.app_metadata?.provider),
+            country,
+            source,
+            totalUsers: totalUsers ?? null,
+          });
         }
       }
       return NextResponse.redirect(`${origin}${next}`);
