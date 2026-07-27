@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { track } from "@vercel/analytics/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { notifySlackSignup } from "@/lib/slack";
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
@@ -29,6 +30,9 @@ export async function GET(request: Request) {
           });
         }
         await track("signup", { referred: Boolean(ref), source });
+        if (data.user.email) {
+          await notifySlackSignup({ email: data.user.email, source, referred: Boolean(ref) });
+        }
       }
       return NextResponse.redirect(`${origin}${next}`);
     }
