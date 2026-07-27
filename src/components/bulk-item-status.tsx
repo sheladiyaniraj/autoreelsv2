@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Check, Loader2, TriangleAlert } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { playSuccessSound } from "@/lib/play-success-sound";
 import { Badge } from "@/components/ui/badge";
 
 const STAGE_LABELS: Record<string, string> = {
@@ -42,6 +43,7 @@ export function BulkItemStatus({ reelId, jobId }: { reelId: string; jobId: strin
       if (data.status === "succeeded") {
         settledRef.current = true;
         setStatus("succeeded");
+        playSuccessSound();
       } else if (data.status === "failed") {
         settledRef.current = true;
         setStatus("failed");

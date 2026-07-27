@@ -30,6 +30,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { playSuccessSound } from "@/lib/play-success-sound";
 import { RenderProgress } from "@/components/render-progress";
 import { IMAGE_MODELS, type ImageModelKey } from "@/lib/providers/image-models";
 
@@ -176,6 +177,7 @@ export function CreateWizard({
   }
 
   function handleRenderSucceeded() {
+    playSuccessSound();
     toast.success("Reel ready!");
     router.push(`/reels/${reelId}`);
   }
