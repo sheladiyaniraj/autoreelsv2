@@ -31,6 +31,20 @@ export function resolveFontFamily(label: string): string {
   return FONT_FAMILY_BY_LABEL[label] ?? "Inter";
 }
 
+// None of the bundled Latin-script fonts (Inter, Archivo Black,
+// Merriweather) have Devanagari glyphs — libass silently drops any text it
+// can't render in the requested font rather than erroring or falling back,
+// so Hindi captions rendered fully blank regardless of the chosen style.
+// Detecting the script and overriding the font is the only fix; a template's
+// font *label* is a style preference, but this is a hard glyph-support
+// requirement that has to win regardless of what was requested.
+const DEVANAGARI_RANGE = /[ऀ-ॿ]/;
+
+function detectScriptFontOverride(words: TranscriptWord[]): string | null {
+  const text = words.map((w) => w.text).join("");
+  return DEVANAGARI_RANGE.test(text) ? "Noto Sans Devanagari" : null;
+}
+
 function hexToAssColor(hex: string): string {
   const clean = hex.replace("#", "").padEnd(6, "0").slice(0, 6);
   const r = clean.slice(0, 2);
@@ -75,7 +89,8 @@ function groupWords(words: TranscriptWord[]): TranscriptWord[][] {
 
 function buildHeader(
   style: CaptionStyle,
-  resolution: { width: number; height: number }
+  resolution: { width: number; height: number },
+  fontOverride: string | null
 ): string {
   const alignment = style.position === "center" ? 5 : 2;
   const fontSize = Math.round(resolution.height * FONT_SIZE_RATIO);
@@ -84,6 +99,7 @@ function buildHeader(
   const marginLR = Math.round(resolution.width * 0.02);
   const primaryColour = hexToAssColor(style.color);
   const outlineColour = hexToAssColor(pickOutlineColor(style.color));
+  const fontFamily = fontOverride ?? resolveFontFamily(style.font);
 
   return `[Script Info]
 ScriptType: v4.00+
@@ -94,7 +110,7 @@ ScaledBorderAndShadow: yes
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Default,${resolveFontFamily(style.font)},${fontSize},${primaryColour},&H000000FF,${outlineColour},&H00000000,1,0,0,0,100,100,0,0,1,${outline},0,${alignment},${marginLR},${marginLR},${marginV},1
+Style: Default,${fontFamily},${fontSize},${primaryColour},&H000000FF,${outlineColour},&H00000000,1,0,0,0,100,100,0,0,1,${outline},0,${alignment},${marginLR},${marginLR},${marginV},1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
@@ -172,6 +188,7 @@ export function buildAssSubtitles(
       ? buildTypewriterEvents(group)
       : buildHighlightedEvents(group, style)
   );
+  const fontOverride = detectScriptFontOverride(words);
 
-  return buildHeader(style, resolution) + events.join("\n") + "\n";
+  return buildHeader(style, resolution, fontOverride) + events.join("\n") + "\n";
 }
