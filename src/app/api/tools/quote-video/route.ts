@@ -5,9 +5,10 @@ import {
   QUOTE_MAX_LENGTH,
   AUTHOR_MAX_LENGTH,
 } from "@/lib/hyperframes/build-quote-composition";
-import { renderQuoteVideo } from "@/lib/hyperframes/render-quote-video";
+import { probeAudioDurationSeconds, renderQuoteVideo } from "@/lib/hyperframes/render-quote-video";
 import { getQuoteStyle, QUOTE_STYLES } from "@/lib/hyperframes/quote-styles";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { synthesizeVoice } from "@/lib/providers/voice";
 
 export const maxDuration = 300;
 
@@ -29,11 +30,13 @@ export async function POST(request: Request) {
     quote?: string;
     author?: string;
     styleId?: string;
+    voiceover?: boolean;
   };
 
   const quote = body.quote?.trim() ?? "";
   const author = body.author?.trim() ?? "";
   const styleId = body.styleId && VALID_STYLE_IDS.has(body.styleId) ? body.styleId : QUOTE_STYLES[0].id;
+  const voiceover = body.voiceover === true;
 
   if (!quote) {
     return NextResponse.json({ error: "Enter a quote or stat" }, { status: 400 });
@@ -52,9 +55,27 @@ export async function POST(request: Request) {
   }
 
   try {
-    const html = buildQuoteComposition({ quote, author, styleId: getQuoteStyle(styleId).id });
-    const video = await renderQuoteVideo(html);
-    await track("tool_used", { tool: "quote-video-maker" });
+    let audio: Buffer | undefined;
+    let narrationDurationSeconds: number | undefined;
+    if (voiceover) {
+      const speech = await synthesizeVoice({
+        text: author ? `${quote} — ${author}` : quote,
+        voiceName: "Aria",
+        provider: "elevenlabs",
+      });
+      audio = Buffer.from(speech.audio);
+      narrationDurationSeconds = await probeAudioDurationSeconds(audio);
+    }
+
+    const html = buildQuoteComposition({
+      quote,
+      author,
+      styleId: getQuoteStyle(styleId).id,
+      narrationDurationSeconds,
+      hasAudio: Boolean(audio),
+    });
+    const video = await renderQuoteVideo({ html, audio });
+    await track("tool_used", { tool: "quote-video-maker", voiceover });
     return new NextResponse(new Uint8Array(video), {
       headers: {
         "Content-Type": "video/mp4",

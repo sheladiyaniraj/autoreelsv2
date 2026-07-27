@@ -19,19 +19,39 @@ function quoteFontSize(quote: string): number {
   return 42;
 }
 
+// Duration follows the narration when there's voiceover (audio length + a
+// short tail so it doesn't cut off mid-breath), otherwise a fixed quick-read
+// length. Clamped so a very short/long narration can't produce a jarring or
+// (via the sandbox render cost) abusive composition.
+const MIN_DURATION = 4;
+const MAX_DURATION = 30;
+const SILENT_DURATION = 6;
+
+function resolveDuration(narrationDurationSeconds: number | undefined): number {
+  if (!narrationDurationSeconds) return SILENT_DURATION;
+  const withTail = Math.ceil(narrationDurationSeconds + 1);
+  return Math.min(MAX_DURATION, Math.max(MIN_DURATION, withTail));
+}
+
 export function buildQuoteComposition({
   quote,
   author,
   styleId,
+  narrationDurationSeconds,
+  hasAudio,
 }: {
   quote: string;
   author: string;
   styleId: string;
+  narrationDurationSeconds?: number;
+  hasAudio?: boolean;
 }): string {
   const style = getQuoteStyle(styleId);
   const safeQuote = escapeHtml(quote.trim().slice(0, QUOTE_MAX_LENGTH));
   const safeAuthor = escapeHtml(author.trim().slice(0, AUTHOR_MAX_LENGTH));
   const fontSize = quoteFontSize(safeQuote);
+  const duration = resolveDuration(narrationDurationSeconds);
+  const fadeOutStart = Math.max(0.5, duration - 0.5);
 
   return `<!doctype html>
 <html lang="en">
@@ -88,14 +108,15 @@ export function buildQuoteComposition({
       data-start="0"
       data-width="1080"
       data-height="1920"
-      data-duration="6"
+      data-duration="${duration}"
     >
-      <div id="bg" class="clip" data-start="0" data-duration="6" data-track-index="0"></div>
-      <div id="content" class="clip" data-start="0" data-duration="6" data-track-index="1">
+      <div id="bg" class="clip" data-start="0" data-duration="${duration}" data-track-index="0"></div>
+      <div id="content" class="clip" data-start="0" data-duration="${duration}" data-track-index="1">
         <div id="accent"></div>
         <div id="quote">${safeQuote}</div>
         ${safeAuthor ? `<div id="author">— ${safeAuthor}</div>` : ""}
       </div>
+      ${hasAudio ? `<audio data-start="0" data-duration="${duration}" data-track-index="2" src="voice.mp3"></audio>` : ""}
     </div>
     <script>
       window.__timelines = window.__timelines || {};
@@ -103,7 +124,7 @@ export function buildQuoteComposition({
       tl.from("#accent", { scaleX: 0, transformOrigin: "left center", duration: 0.5, ease: "power2.out" }, 0.15);
       tl.from("#quote", { y: 40, opacity: 0, duration: 0.6, ease: "power3.out" }, 0.3);
       ${safeAuthor ? `tl.from("#author", { y: 20, opacity: 0, duration: 0.5, ease: "power2.out" }, 0.7);` : ""}
-      tl.to("#root", { opacity: 0, duration: 0.4 }, 5.5);
+      tl.to("#root", { opacity: 0, duration: 0.4 }, ${fadeOutStart});
       window.__timelines["main"] = tl;
     </script>
   </body>

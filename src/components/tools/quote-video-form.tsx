@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Download, Loader2, Sparkles } from "lucide-react";
+import { Download, Loader2, Mic, Sparkles } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ export function QuoteVideoForm() {
   const [quote, setQuote] = useState("");
   const [author, setAuthor] = useState("");
   const [styleId, setStyleId] = useState(QUOTE_STYLES[0].id);
+  const [voiceover, setVoiceover] = useState(false);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -24,7 +25,7 @@ export function QuoteVideoForm() {
       const res = await fetch("/api/tools/quote-video", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ quote, author, styleId }),
+        body: JSON.stringify({ quote, author, styleId, voiceover }),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
@@ -69,6 +70,16 @@ export function QuoteVideoForm() {
         maxLength={60}
         onChange={(e) => setAuthor(e.target.value)}
       />
+
+      <Button
+        type="button"
+        size="sm"
+        variant={voiceover ? "default" : "outline"}
+        onClick={() => setVoiceover((v) => !v)}
+      >
+        <Mic className="size-3.5" />
+        {voiceover ? "AI voiceover on" : "Add AI voiceover"}
+      </Button>
 
       <Button className="w-full" disabled={isLoading || !quote.trim()} onClick={handleSubmit}>
         {isLoading ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}

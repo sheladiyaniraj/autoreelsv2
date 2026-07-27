@@ -112,11 +112,17 @@ async function restoreOrCreate(): Promise<Sandbox> {
   return sandbox;
 }
 
-export async function renderCompositionInSandbox(html: string): Promise<Buffer> {
+export async function renderCompositionInSandbox(
+  html: string,
+  extraFiles: ReadonlyArray<{ rel: string; content: Buffer }> = []
+): Promise<Buffer> {
   const sandbox = await restoreOrCreate();
 
   try {
-    await sandbox.writeFiles([{ path: "composition/index.html", content: html }]);
+    await sandbox.writeFiles([
+      { path: "composition/index.html", content: html },
+      ...extraFiles.map(({ rel, content }) => ({ path: `composition/${rel}`, content })),
+    ]);
 
     await runSandboxCommand(sandbox, "render", {
       cmd: "npx",

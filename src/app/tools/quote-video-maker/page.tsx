@@ -18,9 +18,10 @@ export default function QuoteVideoMakerPage() {
           <h2 className="text-base font-medium text-foreground">How it works</h2>
           <p>
             Paste a quote, stat, or short headline (up to 220 characters),
-            optionally credit an author or source, and pick a style. It
-            renders as a 6-second, 1080×1920 animated MP4 ready for Reels,
-            TikTok, or Shorts.
+            optionally credit an author or source, and pick a style. Turn on
+            AI voiceover to have it narrated — the video length then matches
+            the narration. Renders as a 1080×1920 animated MP4 ready for
+            Reels, TikTok, or Shorts.
           </p>
         </>
       }
