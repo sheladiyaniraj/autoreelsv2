@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { headers } from "next/headers";
 import { Mail } from "lucide-react";
+import { GoogleIcon } from "@/components/icons/google-icon";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -12,11 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  signInWithGoogle,
-  signInWithMagicLink,
-  signUpWithPassword,
-} from "@/lib/actions/auth";
+import { signInWithGoogle, signInWithMagicLink } from "@/lib/actions/auth";
 import { extractSignupSource } from "@/lib/site";
 
 export default async function SignupPage({
@@ -56,7 +52,10 @@ export default async function SignupPage({
             </p>
           )}
           <form action={signInWithGoogle}>
+            {ref && <input type="hidden" name="ref" value={ref} />}
+            <input type="hidden" name="signup_source" value={signupSource} />
             <Button type="submit" variant="outline" className="w-full">
+              <GoogleIcon className="size-4" />
               Continue with Google
             </Button>
           </form>
@@ -72,6 +71,8 @@ export default async function SignupPage({
           </div>
           <form action={signInWithMagicLink} className="flex gap-2">
             <input type="hidden" name="page" value="signup" />
+            {ref && <input type="hidden" name="ref" value={ref} />}
+            <input type="hidden" name="signup_source" value={signupSource} />
             <Input
               name="email"
               type="email"
@@ -81,44 +82,6 @@ export default async function SignupPage({
             />
             <Button type="submit" variant="outline" className="shrink-0">
               Send link
-            </Button>
-          </form>
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground">
-                Or use a password
-              </span>
-            </div>
-          </div>
-          <form action={signUpWithPassword} className="space-y-4">
-            {ref && <input type="hidden" name="ref" value={ref} />}
-            <input type="hidden" name="signup_source" value={signupSource} />
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="new-password"
-                minLength={6}
-                required
-              />
-            </div>
-            <Button type="submit" className="w-full">
-              Sign up
             </Button>
           </form>
         </CardContent>

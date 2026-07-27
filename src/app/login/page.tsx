@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -11,11 +10,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Mail } from "lucide-react";
-import {
-  signInWithGoogle,
-  signInWithMagicLink,
-  signInWithPassword,
-} from "@/lib/actions/auth";
+import { GoogleIcon } from "@/components/icons/google-icon";
+import { signInWithGoogle, signInWithMagicLink } from "@/lib/actions/auth";
 
 export default async function LoginPage({
   searchParams,
@@ -47,6 +43,7 @@ export default async function LoginPage({
           )}
           <form action={signInWithGoogle}>
             <Button type="submit" variant="outline" className="w-full">
+              <GoogleIcon className="size-4" />
               Continue with Google
             </Button>
           </form>
@@ -71,41 +68,6 @@ export default async function LoginPage({
             />
             <Button type="submit" variant="outline" className="shrink-0">
               Send link
-            </Button>
-          </form>
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground">
-                Or use a password
-              </span>
-            </div>
-          </div>
-          <form action={signInWithPassword} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-              />
-            </div>
-            <Button type="submit" className="w-full">
-              Log in
             </Button>
           </form>
         </CardContent>

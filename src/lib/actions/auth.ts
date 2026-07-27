@@ -2,59 +2,21 @@
 
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
-import { track } from "@vercel/analytics/server";
 import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
 
-export async function signInWithPassword(formData: FormData) {
-  const email = String(formData.get("email") ?? "");
-  const password = String(formData.get("password") ?? "");
-
-  const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
-
-  if (error) {
-    redirect(`/login?error=${encodeURIComponent(error.message)}`);
-  }
-
-  redirect("/dashboard");
-}
-
-export async function signUpWithPassword(formData: FormData) {
-  const email = String(formData.get("email") ?? "");
-  const password = String(formData.get("password") ?? "");
-  const referralCode = formData.get("ref");
+function buildCallbackUrl(origin: string, formData: FormData): string {
+  const ref = formData.get("ref");
   const signupSource = String(formData.get("signup_source") ?? "direct");
-  const origin = (await headers()).get("origin");
-
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: { emailRedirectTo: `${origin}/auth/callback` },
-  });
-
-  if (error) {
-    redirect(`/signup?error=${encodeURIComponent(error.message)}`);
-  }
-
-  if (data.user && referralCode) {
-    const admin = createAdminClient();
-    await admin.rpc("redeem_referral", {
-      p_referred_id: data.user.id,
-      p_referral_code: String(referralCode),
-    });
-  }
-
-  await track("signup", { referred: Boolean(referralCode), source: signupSource });
-
-  redirect("/dashboard");
+  const url = new URL(`${origin}/auth/callback`);
+  if (ref) url.searchParams.set("ref", String(ref));
+  url.searchParams.set("source", signupSource);
+  return url.toString();
 }
 
 export async function signInWithMagicLink(formData: FormData) {
   const email = String(formData.get("email") ?? "");
   const page = formData.get("page") === "signup" ? "/signup" : "/login";
-  const origin = (await headers()).get("origin");
+  const origin = (await headers()).get("origin") ?? "";
 
   const supabase = await createClient();
   // signInWithOtp creates the user automatically if they don't exist yet,
@@ -62,7 +24,7 @@ export async function signInWithMagicLink(formData: FormData) {
   // no separate "magic link signup" action needed.
   const { error } = await supabase.auth.signInWithOtp({
     email,
-    options: { emailRedirectTo: `${origin}/auth/callback` },
+    options: { emailRedirectTo: buildCallbackUrl(origin, formData) },
   });
 
   if (error) {
@@ -72,13 +34,13 @@ export async function signInWithMagicLink(formData: FormData) {
   redirect(`${page}?magicSent=${encodeURIComponent(email)}`);
 }
 
-export async function signInWithGoogle() {
-  const origin = (await headers()).get("origin");
+export async function signInWithGoogle(formData: FormData) {
+  const origin = (await headers()).get("origin") ?? "";
   const supabase = await createClient();
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
-    options: { redirectTo: `${origin}/auth/callback` },
+    options: { redirectTo: buildCallbackUrl(origin, formData) },
   });
 
   if (error) {
