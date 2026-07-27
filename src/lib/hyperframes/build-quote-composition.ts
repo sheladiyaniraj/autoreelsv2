@@ -99,6 +99,16 @@ export function buildQuoteComposition({
         font-size: 40px;
         font-weight: 700;
       }
+      #watermark {
+        left: 0;
+        right: 0;
+        bottom: 40px;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.55);
+        font-size: 26px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+      }
     </style>
   </head>
   <body>
@@ -116,6 +126,7 @@ export function buildQuoteComposition({
         <div id="quote">${safeQuote}</div>
         ${safeAuthor ? `<div id="author">— ${safeAuthor}</div>` : ""}
       </div>
+      <div id="watermark" class="clip" data-start="0" data-duration="${duration}" data-track-index="1">autoreels.in</div>
       ${hasAudio ? `<audio data-start="0" data-duration="${duration}" data-track-index="2" src="voice.mp3"></audio>` : ""}
     </div>
     <script>
