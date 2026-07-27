@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { track } from "@vercel/analytics/server";
 import { transcribeAudio } from "@/lib/providers/transcript";
 import { burnCaptionsOnVideo } from "@/lib/render/burn-captions";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
@@ -43,6 +44,7 @@ export async function POST(request: Request) {
     }
 
     const captioned = await burnCaptionsOnVideo({ video, words: transcript.words });
+    await track("tool_used", { tool: "caption-generator" });
     return new NextResponse(new Uint8Array(captioned), {
       headers: { "Content-Type": "video/mp4" },
     });

@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { EmailCapture } from "@/components/tools/email-capture";
 
 export function HashtagGeneratorForm() {
   const [text, setText] = useState("");
@@ -72,6 +73,8 @@ export function HashtagGeneratorForm() {
           </CardContent>
         </Card>
       )}
+
+      {hashtags && hashtags.length > 0 && <EmailCapture tool="hashtag-generator" />}
     </div>
   );
 }

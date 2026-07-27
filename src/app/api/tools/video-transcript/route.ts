@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { track } from "@vercel/analytics/server";
 import { transcribeAudio } from "@/lib/providers/transcript";
 import { buildSrt } from "@/lib/srt";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
@@ -30,6 +31,7 @@ export async function POST(request: Request) {
     const audio = new Uint8Array(await file.arrayBuffer());
     const transcript = await transcribeAudio({ audio });
     const srt = buildSrt(transcript.words);
+    await track("tool_used", { tool: "video-transcript" });
     return NextResponse.json({ text: transcript.text, srt });
   } catch {
     return NextResponse.json(

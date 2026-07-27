@@ -5,13 +5,16 @@ import { Download, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { EmailCapture } from "@/components/tools/email-capture";
 
 export function UrlDownloaderForm({
   apiEndpoint,
   placeholder,
+  tool,
 }: {
   apiEndpoint: string;
   placeholder: string;
+  tool: string;
 }) {
   const [url, setUrl] = useState("");
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
@@ -76,6 +79,8 @@ export function UrlDownloaderForm({
           </Button>
         </div>
       )}
+
+      {videoUrl && <EmailCapture tool={tool} />}
     </div>
   );
 }

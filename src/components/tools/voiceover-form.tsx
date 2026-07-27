@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { EmailCapture } from "@/components/tools/email-capture";
 
 const VOICES = ["Aria", "Rohan", "Maya", "Diego"];
 
@@ -86,6 +87,8 @@ export function VoiceoverForm() {
           </Button>
         </div>
       )}
+
+      {audioUrl && <EmailCapture tool="ai-voiceover" />}
     </div>
   );
 }

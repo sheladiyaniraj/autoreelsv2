@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Check, Copy, Download, FileText, Loader2, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { EmailCapture } from "@/components/tools/email-capture";
 
 export function TranscriptForm() {
   const [file, setFile] = useState<File | null>(null);
@@ -99,6 +100,8 @@ export function TranscriptForm() {
           </CardContent>
         </Card>
       )}
+
+      {result && <EmailCapture tool="video-transcript" />}
     </div>
   );
 }

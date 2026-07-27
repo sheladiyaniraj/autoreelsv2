@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { track } from "@vercel/analytics/server";
 import { generateHashtags } from "@/lib/providers/hashtags";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
@@ -23,6 +24,7 @@ export async function POST(request: Request) {
 
   try {
     const hashtags = await generateHashtags({ script: text });
+    await track("tool_used", { tool: "hashtag-generator" });
     return NextResponse.json({ hashtags });
   } catch {
     return NextResponse.json({ error: "Couldn't generate hashtags — try again" }, { status: 500 });

@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { EmailCapture } from "@/components/tools/email-capture";
 
 type InputType = "topic" | "url";
 
@@ -91,6 +92,8 @@ export function ScriptGeneratorForm() {
           </CardContent>
         </Card>
       )}
+
+      {script && <EmailCapture tool="script-generator" />}
     </div>
   );
 }

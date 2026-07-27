@@ -34,6 +34,7 @@ export default function InstagramDownloaderPage() {
       <UrlDownloaderForm
         apiEndpoint="/api/tools/instagram-downloader"
         placeholder="https://www.instagram.com/reel/..."
+        tool="instagram-downloader"
       />
     </ToolPageShell>
   );

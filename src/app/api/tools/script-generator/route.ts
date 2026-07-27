@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { track } from "@vercel/analytics/server";
 import { generateScript, type ScriptInputType } from "@/lib/providers/script";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
@@ -27,6 +28,7 @@ export async function POST(request: Request) {
 
   try {
     const script = await generateScript({ inputType, inputValue });
+    await track("tool_used", { tool: "script-generator" });
     return NextResponse.json({ script });
   } catch {
     return NextResponse.json({ error: "Couldn't generate a script — try again" }, { status: 500 });

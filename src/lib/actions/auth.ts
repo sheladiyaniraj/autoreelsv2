@@ -24,6 +24,7 @@ export async function signUpWithPassword(formData: FormData) {
   const email = String(formData.get("email") ?? "");
   const password = String(formData.get("password") ?? "");
   const referralCode = formData.get("ref");
+  const signupSource = String(formData.get("signup_source") ?? "direct");
   const origin = (await headers()).get("origin");
 
   const supabase = await createClient();
@@ -45,7 +46,7 @@ export async function signUpWithPassword(formData: FormData) {
     });
   }
 
-  await track("signup", { referred: Boolean(referralCode) });
+  await track("signup", { referred: Boolean(referralCode), source: signupSource });
 
   redirect("/dashboard");
 }

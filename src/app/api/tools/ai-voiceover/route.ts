@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { track } from "@vercel/analytics/server";
 import { synthesizeVoice } from "@/lib/providers/voice";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
@@ -35,6 +36,7 @@ export async function POST(request: Request) {
     // unauthenticated tool's per-request cost low and predictable —
     // ElevenLabs is reserved for signed-in users in the full product.
     const { audio, mediaType } = await synthesizeVoice({ text, voiceName });
+    await track("tool_used", { tool: "ai-voiceover" });
     return new NextResponse(Buffer.from(audio), {
       headers: { "Content-Type": mediaType },
     });

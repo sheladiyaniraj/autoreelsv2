@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { headers } from "next/headers";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,6 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { signInWithGoogle, signUpWithPassword } from "@/lib/actions/auth";
+import { extractSignupSource } from "@/lib/site";
 
 export default async function SignupPage({
   searchParams,
@@ -18,6 +20,11 @@ export default async function SignupPage({
   searchParams: Promise<{ error?: string; ref?: string }>;
 }) {
   const { error, ref } = await searchParams;
+  // Captured here (page load, when the Referer header still points at
+  // whichever page the visitor actually clicked "Sign up" from) and
+  // threaded through as a hidden field, since by the time the form POSTs
+  // as a Server Action the Referer would just say "/signup" itself.
+  const signupSource = extractSignupSource((await headers()).get("referer"));
 
   return (
     <div className="flex min-h-svh items-center justify-center p-6">
@@ -53,6 +60,7 @@ export default async function SignupPage({
           </div>
           <form action={signUpWithPassword} className="space-y-4">
             {ref && <input type="hidden" name="ref" value={ref} />}
+            <input type="hidden" name="signup_source" value={signupSource} />
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input

@@ -33,6 +33,7 @@ export default function YoutubeDownloaderPage() {
       <UrlDownloaderForm
         apiEndpoint="/api/tools/youtube-downloader"
         placeholder="https://www.youtube.com/watch?v=..."
+        tool="youtube-downloader"
       />
     </ToolPageShell>
   );

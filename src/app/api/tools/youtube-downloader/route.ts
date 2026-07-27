@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { track } from "@vercel/analytics/server";
 import { downloadMedia } from "@/lib/downloaders/yt-dlp";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
@@ -26,6 +27,7 @@ export async function POST(request: Request) {
   try {
     const { video, title } = await downloadMedia(url);
     const filename = `${title.replace(/[^a-z0-9]+/gi, "-").slice(0, 60) || "video"}.mp4`;
+    await track("tool_used", { tool: "youtube-downloader" });
     return new NextResponse(new Uint8Array(video), {
       headers: {
         "Content-Type": "video/mp4",
