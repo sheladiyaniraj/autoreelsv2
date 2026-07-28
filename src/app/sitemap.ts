@@ -7,6 +7,7 @@ import { SITE_URL as BASE_URL } from "@/lib/site";
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: BASE_URL, changeFrequency: "weekly", priority: 1 },
+    { url: `${BASE_URL}/for-instagram`, changeFrequency: "monthly", priority: 0.9 },
     { url: `${BASE_URL}/tools`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${BASE_URL}/blog`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${BASE_URL}/ideas`, changeFrequency: "monthly", priority: 0.8 },
