@@ -1,4 +1,5 @@
 import type { TranscriptWord } from "@/lib/providers/transcript";
+import { containsDevanagari } from "@/lib/script-detection";
 
 export type CaptionStyle = {
   font: string;
@@ -40,11 +41,9 @@ export function resolveFontFamily(label: string): string {
 // Detecting the script and overriding the font is the only fix; a template's
 // font *label* is a style preference, but this is a hard glyph-support
 // requirement that has to win regardless of what was requested.
-const DEVANAGARI_RANGE = /[ऀ-ॿ]/;
-
 function detectScriptFontOverride(words: TranscriptWord[]): string | null {
   const text = words.map((w) => w.text).join("");
-  return DEVANAGARI_RANGE.test(text) ? "Noto Sans Devanagari" : null;
+  return containsDevanagari(text) ? "Noto Sans Devanagari" : null;
 }
 
 function hexToAssColor(hex: string): string {
@@ -102,6 +101,12 @@ function buildHeader(
   const primaryColour = hexToAssColor(style.color);
   const outlineColour = hexToAssColor(pickOutlineColor(style.color));
   const fontFamily = fontOverride ?? resolveFontFamily(style.font);
+  // libass has no fontconfig here, so Bold is resolved purely against files
+  // in fontsdir rather than via bold-face lookup/synthesis fallback. The
+  // bundled Noto Sans Devanagari is a Regular-only static instance, so
+  // forcing Bold on it distorts conjuncts/matras instead of rendering an
+  // actual bold face.
+  const bold = fontOverride ? 0 : 1;
 
   return `[Script Info]
 ScriptType: v4.00+
@@ -112,7 +117,7 @@ ScaledBorderAndShadow: yes
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Default,${fontFamily},${fontSize},${primaryColour},&H000000FF,${outlineColour},&H00000000,1,0,0,0,100,100,0,0,1,${outline},0,${alignment},${marginLR},${marginLR},${marginV},1
+Style: Default,${fontFamily},${fontSize},${primaryColour},&H000000FF,${outlineColour},&H00000000,${bold},0,0,0,100,100,0,0,1,${outline},0,${alignment},${marginLR},${marginLR},${marginV},1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
