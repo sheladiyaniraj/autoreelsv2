@@ -5,6 +5,9 @@ import { Check, Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 
+// Default sequence for the topic/script/url reel wizard — DO NOT reorder or
+// insert other flows' stages here, create-wizard.tsx relies on this exact
+// default (it renders RenderProgress without a `stages` prop).
 const ALL_STAGES = [
   "script",
   "voice",
@@ -16,7 +19,19 @@ const ALL_STAGES = [
   "done",
 ] as const;
 
-export type RenderStage = (typeof ALL_STAGES)[number];
+const EXTRA_STAGES = ["extract_audio", "timeline_plan"] as const;
+
+export type RenderStage = (typeof ALL_STAGES)[number] | (typeof EXTRA_STAGES)[number];
+
+export const TALKING_HEAD_STAGES: readonly RenderStage[] = [
+  "extract_audio",
+  "transcript",
+  "timeline_plan",
+  "visuals",
+  "compose",
+  "upload",
+  "done",
+];
 
 const STAGE_LABELS: Record<RenderStage, string> = {
   script: "Writing script",
@@ -27,6 +42,8 @@ const STAGE_LABELS: Record<RenderStage, string> = {
   compose: "Rendering video",
   upload: "Saving reel",
   done: "Done",
+  extract_audio: "Extracting audio",
+  timeline_plan: "Planning your edit",
 };
 
 const POLL_INTERVAL_MS = 1200;

@@ -19,7 +19,7 @@ export async function DELETE(
 
   const { data: reel } = await supabase
     .from("reels")
-    .select("id, video_url, thumb_url, audio_url")
+    .select("id, video_url, thumb_url, audio_url, source_video_url")
     .eq("id", reelId)
     .eq("user_id", user.id)
     .single();
@@ -50,6 +50,7 @@ export async function DELETE(
         reel.video_url,
         reel.thumb_url,
         reel.audio_url,
+        reel.source_video_url,
         ...(scenes?.map((s) => s.visual_url) ?? []),
         ...(versions?.flatMap((v) => [v.video_url, v.thumb_url]) ?? []),
       ].filter((url): url is string => Boolean(url))

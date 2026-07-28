@@ -219,11 +219,12 @@ async function stepFinalize(
   );
 }
 
-async function stepMarkFailed(
+export async function stepMarkFailed(
   jobId: string,
   reelId: string,
   userId: string,
-  errorMessage: string
+  errorMessage: string,
+  refundReason: string = "reel_generation_failed"
 ) {
   "use step";
   const admin = createAdminClient();
@@ -244,13 +245,13 @@ async function stepMarkFailed(
     .from("credit_ledger")
     .select("id")
     .eq("ref_id", reelId)
-    .eq("reason", "reel_generation_failed")
+    .eq("reason", refundReason)
     .maybeSingle();
 
   if (!existingRefund) {
     await admin.rpc("refund_credit", {
       p_user_id: userId,
-      p_reason: "reel_generation_failed",
+      p_reason: refundReason,
       p_ref_id: reelId,
     });
   }

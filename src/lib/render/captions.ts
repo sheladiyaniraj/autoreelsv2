@@ -4,7 +4,9 @@ export type CaptionStyle = {
   font: string;
   color: string;
   highlight: string;
-  position: "center" | "bottom" | string;
+  // "roam" alternates each caption group between a top- and bottom-safe-zone
+  // anchor — see positionOverrideTag below.
+  position: "center" | "bottom" | "roam" | string;
   animation: "fade" | "pop" | "typewriter" | string;
 };
 
@@ -128,12 +130,23 @@ function animationPrefix(style: CaptionStyle): string {
   }
 }
 
+// Alternates each caption GROUP between a top-safe-zone and bottom-safe-zone
+// anchor via ASS's \an override tag — the "kinetic caption" effect, without
+// any face-detection, just alternation between two generic safe zones.
+// \an8 = top-center, \an2 = bottom-center (ASS numpad alignment values).
+function positionOverrideTag(style: CaptionStyle, groupIndex: number): string {
+  if (style.position !== "roam") return "";
+  return groupIndex % 2 === 0 ? "{\\an8}" : "{\\an2}";
+}
+
 function buildHighlightedEvents(
   group: TranscriptWord[],
-  style: CaptionStyle
+  style: CaptionStyle,
+  groupIndex: number
 ): string[] {
   const highlightColour = hexToAssColor(style.highlight);
   const primaryColour = hexToAssColor(style.color);
+  const positionTag = positionOverrideTag(style, groupIndex);
   const lines: string[] = [];
 
   for (let i = 0; i < group.length; i++) {
@@ -152,26 +165,31 @@ function buildHighlightedEvents(
       .join(" ");
 
     lines.push(
-      `Dialogue: 0,${formatAssTime(start)},${formatAssTime(end)},Default,,0,0,0,,${animationPrefix(style)}${text}`
+      `Dialogue: 0,${formatAssTime(start)},${formatAssTime(end)},Default,,0,0,0,,${positionTag}${animationPrefix(style)}${text}`
     );
   }
 
   return lines;
 }
 
-function buildTypewriterEvents(group: TranscriptWord[]): string[] {
+function buildTypewriterEvents(
+  group: TranscriptWord[],
+  style: CaptionStyle,
+  groupIndex: number
+): string[] {
   const groupStart = group[0].startSecond;
   const groupEnd = group[group.length - 1].endSecond;
   const fullText = group.map((w) => w.text.trim()).join(" ");
   const duration = Math.max(0.05, groupEnd - groupStart);
   const stepDuration = duration / fullText.length;
+  const positionTag = positionOverrideTag(style, groupIndex);
 
   const lines: string[] = [];
   for (let i = 1; i <= fullText.length; i++) {
     const start = groupStart + stepDuration * (i - 1);
     const end = i === fullText.length ? groupEnd : groupStart + stepDuration * i;
     lines.push(
-      `Dialogue: 0,${formatAssTime(start)},${formatAssTime(end)},Default,,0,0,0,,${escapeAssText(fullText.slice(0, i))}`
+      `Dialogue: 0,${formatAssTime(start)},${formatAssTime(end)},Default,,0,0,0,,${positionTag}${escapeAssText(fullText.slice(0, i))}`
     );
   }
   return lines;
@@ -183,10 +201,10 @@ export function buildAssSubtitles(
   resolution: { width: number; height: number }
 ): string {
   const groups = groupWords(words);
-  const events = groups.flatMap((group) =>
+  const events = groups.flatMap((group, groupIndex) =>
     style.animation === "typewriter"
-      ? buildTypewriterEvents(group)
-      : buildHighlightedEvents(group, style)
+      ? buildTypewriterEvents(group, style, groupIndex)
+      : buildHighlightedEvents(group, style, groupIndex)
   );
   const fontOverride = detectScriptFontOverride(words);
 

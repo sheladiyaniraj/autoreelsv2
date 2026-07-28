@@ -23,7 +23,7 @@ export default async function ReelPage({
   const { data: reel } = await supabase
     .from("reels")
     .select(
-      "id, title, status, video_url, thumb_url, duration, aspect_ratio, created_at, hashtags, voice_id"
+      "id, title, status, video_url, thumb_url, duration, aspect_ratio, created_at, hashtags, voice_id, input_type"
     )
     .eq("id", id)
     .single();
@@ -117,13 +117,17 @@ export default async function ReelPage({
         />
       )}
 
-      {reel.status === "ready" && voices && voices.length > 0 && (
-        <VoiceChanger reelId={reel.id} voices={voices} currentVoiceId={reel.voice_id} />
-      )}
+      {reel.input_type !== "talking_head" &&
+        reel.status === "ready" &&
+        voices &&
+        voices.length > 0 && (
+          <VoiceChanger reelId={reel.id} voices={voices} currentVoiceId={reel.voice_id} />
+        )}
 
-      {reel.status === "ready" && scenes && scenes.length > 0 && (
-        <SceneEditor reelId={reel.id} scenes={scenes} />
-      )}
+      {reel.input_type !== "talking_head" &&
+        reel.status === "ready" &&
+        scenes &&
+        scenes.length > 0 && <SceneEditor reelId={reel.id} scenes={scenes} />}
 
       {reel.status === "ready" && versions && versions.length > 0 && (
         <VersionHistory

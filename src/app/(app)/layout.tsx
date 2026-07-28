@@ -1,6 +1,14 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Clapperboard, CreditCard, LayoutDashboard, Library, Plus, ShieldCheck } from "lucide-react";
+import {
+  Clapperboard,
+  CreditCard,
+  LayoutDashboard,
+  Library,
+  Plus,
+  ShieldCheck,
+  Video,
+} from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -44,6 +52,7 @@ export default async function AppLayout({
   const navItems = [
     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { href: "/create", label: "Create Reel", icon: Plus },
+    { href: "/talking-head", label: "Talking-Head Editor", icon: Video },
     { href: "/library", label: "Library", icon: Library },
     { href: "/billing", label: "Billing", icon: CreditCard },
     ...(profile?.is_admin ? [{ href: "/admin", label: "Admin", icon: ShieldCheck }] : []),
