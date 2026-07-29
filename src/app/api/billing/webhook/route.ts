@@ -12,13 +12,20 @@ function idOf(value: string | { id: string } | null | undefined): string | null 
   return typeof value === "string" ? value : value.id;
 }
 
-async function alreadyProcessed(admin: ReturnType<typeof createAdminClient>, eventId: string) {
-  const { data } = await admin.from("stripe_events").select("id").eq("id", eventId).maybeSingle();
-  return Boolean(data);
+// Atomically claims an event id via the table's primary-key uniqueness —
+// if two overlapping Stripe deliveries race here, only one insert succeeds;
+// the other hits a unique violation and is treated as already-claimed. This
+// closes the check-then-insert window a separate SELECT-then-INSERT would
+// leave open.
+async function claimEvent(admin: ReturnType<typeof createAdminClient>, eventId: string) {
+  const { error } = await admin.from("stripe_events").insert({ id: eventId });
+  if (!error) return true;
+  if (error.code === "23505") return false;
+  throw error;
 }
 
-async function markProcessed(admin: ReturnType<typeof createAdminClient>, eventId: string) {
-  await admin.from("stripe_events").insert({ id: eventId });
+async function releaseEvent(admin: ReturnType<typeof createAdminClient>, eventId: string) {
+  await admin.from("stripe_events").delete().eq("id", eventId);
 }
 
 async function findUserByCustomerId(
@@ -40,18 +47,16 @@ async function addCredits(
   reason: string,
   refId: string
 ) {
-  const { data: user } = await admin.from("users").select("credits").eq("id", userId).single();
-  if (!user) return;
-  await admin
-    .from("users")
-    .update({ credits: user.credits + amount })
-    .eq("id", userId);
-  await admin.from("credit_ledger").insert({
-    user_id: userId,
-    delta: amount,
-    reason,
-    ref_id: refId,
+  // Single atomic UPDATE...RETURNING + ledger insert inside one Postgres
+  // function — a JS-side SELECT-then-UPDATE here would lose an update
+  // whenever Stripe redelivers an overlapping event concurrently.
+  const { error } = await admin.rpc("add_credits", {
+    p_user_id: userId,
+    p_amount: amount,
+    p_reason: reason,
+    p_ref_id: refId,
   });
+  if (error) throw error;
 }
 
 async function handleCheckoutCompleted(
@@ -205,7 +210,7 @@ export async function POST(request: Request) {
 
   const admin = createAdminClient();
 
-  if (await alreadyProcessed(admin, event.id)) {
+  if (!(await claimEvent(admin, event.id))) {
     return NextResponse.json({ received: true, deduped: true });
   }
 
@@ -230,10 +235,12 @@ export async function POST(request: Request) {
         break;
     }
 
-    await markProcessed(admin, event.id);
     return NextResponse.json({ received: true });
   } catch (err) {
     console.error("Stripe webhook handler failed", event.type, err);
+    // Release the claim so Stripe's automatic retry can re-attempt this
+    // event instead of being permanently deduped against a failed run.
+    await releaseEvent(admin, event.id);
     return NextResponse.json({ error: "Handler failed" }, { status: 500 });
   }
 }

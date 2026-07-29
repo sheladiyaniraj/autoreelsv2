@@ -30,18 +30,22 @@ export async function POST(
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
-  const newBalance = target.credits + amount;
-  if (newBalance < 0) {
+  if (target.credits + amount < 0) {
     return NextResponse.json({ error: "Would result in negative balance" }, { status: 400 });
   }
 
-  await admin.from("users").update({ credits: newBalance }).eq("id", targetUserId);
-  await admin.from("credit_ledger").insert({
-    user_id: targetUserId,
-    delta: amount,
-    reason: "admin_grant",
-    ref_id: adminUser.id,
+  // Atomic UPDATE...RETURNING + ledger insert in one Postgres function —
+  // the pre-check above is a best-effort UX guard, not the source of truth
+  // for the arithmetic itself, which this RPC does safely under concurrency.
+  const { data: newBalance, error } = await admin.rpc("add_credits", {
+    p_user_id: targetUserId,
+    p_amount: amount,
+    p_reason: "admin_grant",
+    p_ref_id: adminUser.id,
   });
+  if (error) {
+    return NextResponse.json({ error: "Failed to update credits" }, { status: 500 });
+  }
 
   return NextResponse.json({ credits: newBalance });
 }

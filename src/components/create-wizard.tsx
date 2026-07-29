@@ -180,6 +180,10 @@ export function CreateWizard({
     playSuccessSound();
     toast.success("Reel ready!");
     router.push(`/reels/${reelId}`);
+    // The header's credit badge is read in a shared server layout — a plain
+    // client-side push reuses the cached layout instead of refetching it,
+    // so the badge would keep showing the pre-generation balance otherwise.
+    router.refresh();
   }
 
   function handleRenderFailed(error: string) {
@@ -189,6 +193,7 @@ export function CreateWizard({
     setIsGenerating(false);
     setJobId(null);
     setReelId(null);
+    router.refresh();
   }
 
   return (
