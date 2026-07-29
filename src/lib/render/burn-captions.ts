@@ -71,7 +71,7 @@ export async function burnCaptionsOnVideo({
     const interFontPath = path.join(FONTS_DIR, "Inter.ttf").replace(/:/g, "\\:");
     // Free tool output — watermarked for brand exposure on shared videos.
     // Same drawtext pattern as the main pipeline's optional reel watermark.
-    const watermarkFilter = `,drawtext=fontfile='${interFontPath}':text='autoreels.in':fontsize=${Math.round(width * 0.028)}:fontcolor=white@0.85:box=1:boxcolor=black@0.35:boxborderw=10:x=w-tw-20:y=20`;
+    const watermarkFilter = `,drawtext=fontfile='${interFontPath}':text='Made with autoreels.in':fontsize=${Math.round(width * 0.028)}:fontcolor=white@0.85:box=1:boxcolor=black@0.35:boxborderw=10:x=w-tw-20:y=20`;
 
     await runFfmpeg([
       "-y",

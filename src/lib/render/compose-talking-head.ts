@@ -113,7 +113,7 @@ export async function composeTalkingHeadVideo({
 
     const interFontPath = path.join(FONTS_DIR, "Inter.ttf").replace(/:/g, "\\:");
     const watermarkFilter = watermark
-      ? `,drawtext=fontfile='${interFontPath}':text='autoreels.in':fontsize=${Math.round(width * 0.028)}:fontcolor=white@0.85:box=1:boxcolor=black@0.35:boxborderw=10:x=w-tw-20:y=20`
+      ? `,drawtext=fontfile='${interFontPath}':text='Made with autoreels.in':fontsize=${Math.round(width * 0.028)}:fontcolor=white@0.85:box=1:boxcolor=black@0.35:boxborderw=10:x=w-tw-20:y=20`
       : "";
 
     // When appending an end card, the subtitle/watermark stage feeds the
