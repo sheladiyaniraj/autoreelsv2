@@ -4,7 +4,7 @@ import path from "node:path";
 import type { ReelAspectRatio } from "@/lib/providers/visuals";
 import type { TranscriptWord } from "@/lib/providers/transcript";
 import { buildAssSubtitles, type CaptionStyle } from "@/lib/render/captions";
-import { runFfmpeg, FONTS_DIR } from "@/lib/render/compose";
+import { runFfmpeg, FONTS_DIR, buildEndCardFilter, END_CARD_SECONDS } from "@/lib/render/compose";
 
 const RESOLUTIONS: Record<ReelAspectRatio, { width: number; height: number }> = {
   "9:16": { width: 1080, height: 1920 },
@@ -116,11 +116,31 @@ export async function composeTalkingHeadVideo({
       ? `,drawtext=fontfile='${interFontPath}':text='autoreels.in':fontsize=${Math.round(width * 0.028)}:fontcolor=white@0.85:box=1:boxcolor=black@0.35:boxborderw=10:x=w-tw-20:y=20`
       : "";
 
-    const filter =
+    // When appending an end card, the subtitle/watermark stage feeds the
+    // concat below instead of terminating the graph directly.
+    const subtitleOutputLabel = watermark ? "[vpre]" : "[vout]";
+    let filter =
       filterParts.join(";") +
       `;${concatLabels.join("")}concat=n=${segments.length}:v=1:a=0[vcat]` +
       gradeFilter +
-      `;${graded}subtitles='${escapedAssPath}':fontsdir='${escapedFontsDir}'${watermarkFilter}[vout]`;
+      `;${graded}subtitles='${escapedAssPath}':fontsdir='${escapedFontsDir}'${watermarkFilter}${subtitleOutputLabel}`;
+
+    let finalAudioMap = `${audioInputIndex}:a`;
+    let outputDuration = durationInSeconds;
+
+    if (watermark) {
+      const rawAudioPad = `[${audioInputIndex}:a]`;
+      const endCard = buildEndCardFilter(audioInputIndex + 1, width, height);
+      inputArgs.push(...endCard.inputArgs);
+      filter += endCard.filter;
+      // Normalize before concat — the concat filter requires every segment's
+      // audio to share identical parameters, and the presenter audio's
+      // actual sample rate depends on the source video's encoding.
+      filter += `;${rawAudioPad}aformat=sample_rates=44100:channel_layouts=stereo[mainaudio]`;
+      filter += `;${subtitleOutputLabel}[mainaudio]${endCard.videoLabel}${endCard.audioLabel}concat=n=2:v=1:a=1[vout][aoutfinal]`;
+      finalAudioMap = "[aoutfinal]";
+      outputDuration += END_CARD_SECONDS;
+    }
 
     await runFfmpeg([
       "-y",
@@ -130,7 +150,7 @@ export async function composeTalkingHeadVideo({
       "-map",
       "[vout]",
       "-map",
-      `${audioInputIndex}:a`,
+      finalAudioMap,
       "-c:v",
       "libx264",
       "-preset",
@@ -146,7 +166,7 @@ export async function composeTalkingHeadVideo({
       "-b:a",
       "128k",
       "-t",
-      String(durationInSeconds),
+      String(outputDuration),
       videoPath,
     ]);
 
@@ -154,7 +174,7 @@ export async function composeTalkingHeadVideo({
 
     const [video, thumbnail] = await Promise.all([readFile(videoPath), readFile(thumbPath)]);
 
-    return { video, thumbnail, durationMs: Math.round(durationInSeconds * 1000) };
+    return { video, thumbnail, durationMs: Math.round(outputDuration * 1000) };
   } finally {
     await rm(dir, { recursive: true, force: true });
   }

@@ -17,8 +17,50 @@ const RESOLUTIONS: Record<ReelAspectRatio, { width: number; height: number }> = 
   "16:9": { width: 1920, height: 1080 },
 };
 
-const FPS = 25;
+export const FPS = 25;
 export const FONTS_DIR = path.join(process.cwd(), "src/lib/render/fonts");
+export const END_CARD_SECONDS = 5;
+
+// Free-plan reels get a 5-second branded end card appended after the
+// content — the in-frame watermark survives a crop, but a full-screen "made
+// with" card is what actually drives a viewer who liked the reel back to
+// autoreels.in. Built as an extra concat segment (solid color + drawtext +
+// silence) shared by every pipeline that renders a `watermark` flag, rather
+// than plumbed through each one's own scene/segment types.
+export function buildEndCardFilter(
+  startInputIndex: number,
+  width: number,
+  height: number
+): { inputArgs: string[]; filter: string; videoLabel: string; audioLabel: string } {
+  const colorInputIndex = startInputIndex;
+  const silenceInputIndex = startInputIndex + 1;
+  const titleFontPath = path.join(FONTS_DIR, "ArchivoBlack.ttf").replace(/:/g, "\\:");
+  const subtitleFontPath = path.join(FONTS_DIR, "Inter.ttf").replace(/:/g, "\\:");
+  const titleSize = Math.round(width * 0.075);
+  const subtitleSize = Math.round(width * 0.032);
+
+  const inputArgs = [
+    "-f",
+    "lavfi",
+    "-i",
+    `color=c=0x0A0A0A:s=${width}x${height}:d=${END_CARD_SECONDS}:r=${FPS}`,
+    "-f",
+    "lavfi",
+    "-i",
+    "anullsrc=r=44100:cl=stereo",
+  ];
+
+  const filter =
+    `;[${colorInputIndex}:v]drawtext=fontfile='${titleFontPath}':text='Made with AutoReels':fontsize=${titleSize}:fontcolor=white:x=(w-text_w)/2:y=(h/2)-${titleSize}` +
+    `,drawtext=fontfile='${subtitleFontPath}':text='autoreels.in — create yours free':fontsize=${subtitleSize}:fontcolor=white@0.85:x=(w-text_w)/2:y=(h/2)+${Math.round(titleSize * 0.35)}` +
+    `,format=yuv420p[endcardv]` +
+    // Explicit aformat rather than trusting the source to already be
+    // 44.1kHz stereo — the concat filter requires every segment's audio to
+    // share identical parameters, and TTS providers vary here.
+    `;[${silenceInputIndex}:a]atrim=0:${END_CARD_SECONDS},asetpts=PTS-STARTPTS,aformat=sample_rates=44100:channel_layouts=stereo[endcarda]`;
+
+  return { inputArgs, filter, videoLabel: "[endcardv]", audioLabel: "[endcarda]" };
+}
 
 export function runFfmpeg(args: string[]): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -137,11 +179,32 @@ export async function composeVideo({
       ? `,drawtext=fontfile='${interFontPath}':text='Made with AutoReels':fontsize=${Math.round(width * 0.028)}:fontcolor=white@0.85:box=1:boxcolor=black@0.35:boxborderw=10:x=w-tw-20:y=20`
       : "";
 
-    const filter =
+    // When appending an end card, the subtitle/watermark stage feeds the
+    // concat below instead of terminating the graph directly.
+    const subtitleOutputLabel = watermark ? "[vpre]" : "[vout]";
+    let filter =
       filterParts.join(";") +
       `;${concatLabels.join("")}concat=n=${scenes.length}:v=1:a=0[vcat]` +
-      `;[vcat]subtitles='${escapedAssPath}':fontsdir='${escapedFontsDir}'${watermarkFilter}[vout]` +
+      `;[vcat]subtitles='${escapedAssPath}':fontsdir='${escapedFontsDir}'${watermarkFilter}${subtitleOutputLabel}` +
       audioFilter;
+
+    let finalAudioMap = audioMap;
+    let outputDuration = durationInSeconds;
+
+    if (watermark) {
+      const rawAudioPad = music ? "[aout]" : `[${audioInputIndex}:a]`;
+      const nextInputIndex = audioInputIndex + (music ? 2 : 1);
+      const endCard = buildEndCardFilter(nextInputIndex, width, height);
+      inputArgs.push(...endCard.inputArgs);
+      filter += endCard.filter;
+      // Normalize before concat — the concat filter requires every segment's
+      // audio to share identical parameters, and the voice/music mix's
+      // actual sample rate depends on the TTS provider.
+      filter += `;${rawAudioPad}aformat=sample_rates=44100:channel_layouts=stereo[mainaudio]`;
+      filter += `;${subtitleOutputLabel}[mainaudio]${endCard.videoLabel}${endCard.audioLabel}concat=n=2:v=1:a=1[vout][aoutfinal]`;
+      finalAudioMap = "[aoutfinal]";
+      outputDuration += END_CARD_SECONDS;
+    }
 
     await runFfmpeg([
       "-y",
@@ -151,7 +214,7 @@ export async function composeVideo({
       "-map",
       "[vout]",
       "-map",
-      audioMap,
+      finalAudioMap,
       "-c:v",
       "libx264",
       "-preset",
@@ -167,7 +230,7 @@ export async function composeVideo({
       "-b:a",
       "128k",
       "-t",
-      String(durationInSeconds),
+      String(outputDuration),
       videoPath,
     ]);
 
@@ -181,7 +244,7 @@ export async function composeVideo({
     return {
       video,
       thumbnail,
-      durationMs: Math.round(durationInSeconds * 1000),
+      durationMs: Math.round(outputDuration * 1000),
     };
   } finally {
     await rm(dir, { recursive: true, force: true });
