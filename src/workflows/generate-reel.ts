@@ -94,13 +94,16 @@ export async function stepSynthesizeVoice(
   return { audioUrl: blob.url };
 }
 
-export async function stepTranscribe(audioUrl: string): Promise<{
+export async function stepTranscribe(
+  audioUrl: string,
+  knownScript?: string
+): Promise<{
   words: TranscriptWord[];
   durationInSeconds: number;
 }> {
   "use step";
   const audio = await fetchBytes(audioUrl);
-  const transcript = await transcribeAudio({ audio });
+  const transcript = await transcribeAudio({ audio, knownScript });
   return { words: transcript.words, durationInSeconds: transcript.durationInSeconds };
 }
 
@@ -298,7 +301,7 @@ export async function generateReelWorkflow(input: GenerateReelInput) {
     );
 
     await setStage(jobId, "transcript");
-    const { words, durationInSeconds } = await stepTranscribe(audioUrl);
+    const { words, durationInSeconds } = await stepTranscribe(audioUrl, script);
 
     await setStage(jobId, "scene_plan");
     const scenePlan = planScenes(script, words);

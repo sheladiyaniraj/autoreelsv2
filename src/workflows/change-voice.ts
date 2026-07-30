@@ -133,7 +133,7 @@ export async function changeVoiceWorkflow(input: ChangeVoiceInput) {
     const { audioUrl } = await stepSynthesizeVoice(reelId, script, voiceName, voiceProvider);
 
     await setStage(jobId, "transcript");
-    const { words, durationInSeconds } = await stepTranscribe(audioUrl);
+    const { words, durationInSeconds } = await stepTranscribe(audioUrl, script);
 
     // Retime the *existing* scene texts against the new audio's word
     // timestamps, rather than re-deriving a fresh split from the script —
