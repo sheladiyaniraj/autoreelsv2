@@ -1,5 +1,5 @@
 import type { TranscriptWord } from "@/lib/providers/transcript";
-import { containsDevanagari } from "@/lib/script-detection";
+import { containsDevanagari, containsGujarati } from "@/lib/script-detection";
 
 export type CaptionStyle = {
   font: string;
@@ -35,15 +35,20 @@ export function resolveFontFamily(label: string): string {
 }
 
 // None of the bundled Latin-script fonts (Inter, Archivo Black,
-// Merriweather) have Devanagari glyphs — libass silently drops any text it
-// can't render in the requested font rather than erroring or falling back,
-// so Hindi captions rendered fully blank regardless of the chosen style.
-// Detecting the script and overriding the font is the only fix; a template's
-// font *label* is a style preference, but this is a hard glyph-support
-// requirement that has to win regardless of what was requested.
+// Merriweather) have Devanagari or Gujarati glyphs — libass silently drops
+// any text it can't render in the requested font rather than erroring or
+// falling back, so Hindi/Gujarati captions rendered fully blank regardless
+// of the chosen style. Detecting the script and overriding the font is the
+// only fix; a template's font *label* is a style preference, but this is a
+// hard glyph-support requirement that has to win regardless of what was
+// requested. Gujarati is a distinct Unicode block from Devanagari, so it
+// needs its own bundled font and its own detection — one does not imply
+// coverage of the other.
 function detectScriptFontOverride(words: TranscriptWord[]): string | null {
   const text = words.map((w) => w.text).join("");
-  return containsDevanagari(text) ? "Noto Sans Devanagari" : null;
+  if (containsDevanagari(text)) return "Noto Sans Devanagari";
+  if (containsGujarati(text)) return "Noto Sans Gujarati";
+  return null;
 }
 
 function hexToAssColor(hex: string): string {
@@ -102,10 +107,10 @@ function buildHeader(
   const outlineColour = hexToAssColor(pickOutlineColor(style.color));
   const fontFamily = fontOverride ?? resolveFontFamily(style.font);
   // libass has no fontconfig here, so Bold is resolved purely against files
-  // in fontsdir rather than via bold-face lookup/synthesis fallback. The
-  // bundled Noto Sans Devanagari is a Regular-only static instance, so
-  // forcing Bold on it distorts conjuncts/matras instead of rendering an
-  // actual bold face.
+  // in fontsdir rather than via bold-face lookup/synthesis fallback. Both
+  // bundled script-override fonts (Noto Sans Devanagari, Noto Sans Gujarati)
+  // are Regular-only static instances, so forcing Bold on either distorts
+  // conjuncts/matras instead of rendering an actual bold face.
   const bold = fontOverride ? 0 : 1;
 
   return `[Script Info]

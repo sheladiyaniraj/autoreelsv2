@@ -75,17 +75,21 @@ export async function stepSynthesizeVoice(
   voiceProvider: string | undefined
 ): Promise<{ audioUrl: string }> {
   "use step";
-  const { audio } = await synthesizeVoice({
+  const { audio, mediaType } = await synthesizeVoice({
     text: script,
     voiceName,
     provider: voiceProvider,
   });
+  // Providers don't all return the same container — Sarvam returns WAV,
+  // OpenAI/ElevenLabs return MP3 — so the uploaded extension/content-type
+  // must follow the actual bytes rather than assuming mp3.
+  const ext = mediaType.includes("wav") ? "wav" : "mp3";
   // Versioned filename — same Blob CDN staleness reason as
   // stepGenerateVisual/stepComposeVideo: a fixed path would keep serving the
   // old audio after a voice change re-synthesizes to "the same" path.
-  const blob = await put(`reels/${reelId}/voice-${Date.now()}.mp3`, Buffer.from(audio), {
+  const blob = await put(`reels/${reelId}/voice-${Date.now()}.${ext}`, Buffer.from(audio), {
     access: "public",
-    contentType: "audio/mpeg",
+    contentType: mediaType,
   });
   return { audioUrl: blob.url };
 }

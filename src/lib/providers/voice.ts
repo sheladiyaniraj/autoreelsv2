@@ -1,8 +1,17 @@
 import { elevenlabs } from "@ai-sdk/elevenlabs";
 import { gateway, generateSpeech } from "ai";
+import { containsGujarati } from "@/lib/script-detection";
 
 const OPENAI_SPEECH_MODEL = "openai/tts-1";
 const ELEVENLABS_SPEECH_MODEL = "eleven_flash_v2_5";
+// eleven_flash_v2_5 (and every other ElevenLabs model this app could pick)
+// doesn't support Gujarati at all — eleven_v3 is the only ElevenLabs model
+// that does. Voice IDs are model-agnostic (a voice's timbre carries across
+// models), so the existing voice mapping still applies; only the model
+// needs to switch for Gujarati text.
+const ELEVENLABS_GUJARATI_SPEECH_MODEL = "eleven_v3";
+const SARVAM_TTS_ENDPOINT = "https://api.sarvam.ai/text-to-speech";
+const SARVAM_MODEL = "bulbul:v3";
 
 const OPENAI_VOICE_BY_NAME: Record<string, string> = {
   Aria: "nova",
@@ -19,6 +28,48 @@ const ELEVENLABS_VOICE_BY_NAME: Record<string, string> = {
   Diego: "iP95p4xoKVk53GoZ742B", // Chris — american male
 };
 
+// Sarvam's "ishita" and "shubh" are the two speakers documented as shared
+// across all supported languages (including Gujarati) rather than being
+// per-language voice clones — there's no public voice-listing endpoint to
+// pull a fuller set from, unlike ElevenLabs.
+const SARVAM_SPEAKER_BY_NAME: Record<string, string> = {
+  Aria: "ishita",
+  Maya: "ishita",
+  Rohan: "shubh",
+  Diego: "shubh",
+};
+
+async function synthesizeWithSarvam(
+  text: string,
+  voiceName: string
+): Promise<{ audio: Uint8Array; mediaType: string }> {
+  const speaker = SARVAM_SPEAKER_BY_NAME[voiceName] ?? "ishita";
+
+  const res = await fetch(SARVAM_TTS_ENDPOINT, {
+    method: "POST",
+    headers: {
+      "api-subscription-key": process.env.SARVAM_API_KEY!,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      text,
+      target_language_code: "gu-IN",
+      speaker,
+      model: SARVAM_MODEL,
+    }),
+  });
+
+  if (!res.ok) {
+    throw new Error(`Sarvam TTS request failed: ${res.status} ${await res.text()}`);
+  }
+
+  const { audios } = (await res.json()) as { audios: string[] };
+  return {
+    audio: new Uint8Array(Buffer.from(audios[0], "base64")),
+    mediaType: "audio/wav",
+  };
+}
+
 export async function synthesizeVoice({
   text,
   voiceName,
@@ -28,12 +79,25 @@ export async function synthesizeVoice({
   voiceName: string;
   provider?: string;
 }): Promise<{ audio: Uint8Array; mediaType: string }> {
+  const isGujarati = containsGujarati(text);
+
+  // OpenAI's TTS has no meaningful Gujarati support, so the default
+  // (no explicit provider) path would otherwise silently produce garbled or
+  // wrong-language audio. Sarvam is purpose-built for Gujarati, so it wins
+  // automatically here — the same "hard capability requirement overrides
+  // style preference" reasoning as the caption font override.
+  if (isGujarati && provider !== "elevenlabs" && process.env.SARVAM_API_KEY) {
+    return synthesizeWithSarvam(text, voiceName);
+  }
+
   if (provider === "elevenlabs" && process.env.ELEVENLABS_API_KEY) {
     const voiceId =
       ELEVENLABS_VOICE_BY_NAME[voiceName] ?? ELEVENLABS_VOICE_BY_NAME.Aria;
 
     const result = await generateSpeech({
-      model: elevenlabs.speech(ELEVENLABS_SPEECH_MODEL),
+      model: elevenlabs.speech(
+        isGujarati ? ELEVENLABS_GUJARATI_SPEECH_MODEL : ELEVENLABS_SPEECH_MODEL
+      ),
       text,
       voice: voiceId,
     });
