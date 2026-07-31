@@ -19,19 +19,7 @@ const ALL_STAGES = [
   "done",
 ] as const;
 
-const EXTRA_STAGES = ["extract_audio", "timeline_plan"] as const;
-
-export type RenderStage = (typeof ALL_STAGES)[number] | (typeof EXTRA_STAGES)[number];
-
-export const TALKING_HEAD_STAGES: readonly RenderStage[] = [
-  "extract_audio",
-  "transcript",
-  "timeline_plan",
-  "visuals",
-  "compose",
-  "upload",
-  "done",
-];
+export type RenderStage = (typeof ALL_STAGES)[number];
 
 const STAGE_LABELS: Record<RenderStage, string> = {
   script: "Writing script",
@@ -42,8 +30,6 @@ const STAGE_LABELS: Record<RenderStage, string> = {
   compose: "Rendering video",
   upload: "Saving reel",
   done: "Done",
-  extract_audio: "Extracting audio",
-  timeline_plan: "Planning your edit",
 };
 
 const POLL_INTERVAL_MS = 1200;
