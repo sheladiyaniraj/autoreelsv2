@@ -1,3 +1,15 @@
+// Converts an ISO 3166-1 alpha-2 country code (e.g. the x-vercel-ip-country
+// header) to its flag emoji via regional indicator symbols — no lookup
+// table needed, every letter A-Z has a direct Unicode offset.
+function countryFlagEmoji(countryCode: string): string {
+  if (!/^[A-Za-z]{2}$/.test(countryCode)) return "🌍";
+  const codePoints = countryCode
+    .toUpperCase()
+    .split("")
+    .map((char) => 127397 + char.charCodeAt(0));
+  return String.fromCodePoint(...codePoints);
+}
+
 // Fire-and-forget Slack Incoming Webhook notifications. Silently no-ops if
 // SLACK_SIGNUP_WEBHOOK_URL isn't configured, and never throws — a Slack
 // outage or missing webhook must never break the actual signup/auth flow
@@ -31,7 +43,10 @@ export async function notifySignup({
         type: "section",
         fields: [
           { type: "mrkdwn", text: `*Email:*\n${email}` },
-          { type: "mrkdwn", text: `*Country:*\n${country || "Unknown"}` },
+          {
+            type: "mrkdwn",
+            text: `*Country:*\n${country ? `${countryFlagEmoji(country)} ${country}` : "🌍 Unknown"}`,
+          },
           { type: "mrkdwn", text: `*Method:*\n${method || "unknown"}` },
           { type: "mrkdwn", text: `*Time:*\n${time} IST` },
           { type: "mrkdwn", text: `*Source:*\n\`${source || "direct"}\`` },
