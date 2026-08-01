@@ -17,6 +17,13 @@ const STATUS_BADGE_VARIANT: Record<string, "secondary" | "outline"> = {
   failed: "outline",
 };
 
+function formatGenDuration(ms: number): string {
+  const totalSeconds = Math.round(ms / 1000);
+  const m = Math.floor(totalSeconds / 60);
+  const s = totalSeconds % 60;
+  return m > 0 ? `${m}m ${s}s` : `${s}s`;
+}
+
 export default async function AdminReelsPage({
   searchParams,
 }: {
@@ -62,11 +69,41 @@ export default async function AdminReelsPage({
     : { data: [] };
   const emailByUserId = new Map((users ?? []).map((u) => [u.id, u.email]));
 
+  // A reel can have several render_jobs rows (the initial generation, plus
+  // any later scene regen / voice change) — they all share reel_id, so the
+  // earliest one by created_at is always the original full-generation job.
+  const reelIds = (reels ?? []).map((r) => r.id);
+  const { data: jobs } = reelIds.length
+    ? await admin
+        .from("render_jobs")
+        .select("reel_id, created_at, completed_at")
+        .in("reel_id", reelIds)
+        .order("created_at", { ascending: true })
+    : { data: [] };
+
+  const genJobByReelId = new Map<string, { created_at: string; completed_at: string | null }>();
+  for (const job of jobs ?? []) {
+    if (!genJobByReelId.has(job.reel_id)) {
+      genJobByReelId.set(job.reel_id, job);
+    }
+  }
+
+  const genDurationsMs = [...genJobByReelId.values()]
+    .filter((j) => j.completed_at)
+    .map((j) => new Date(j.completed_at!).getTime() - new Date(j.created_at).getTime());
+  const avgGenDurationMs = genDurationsMs.length
+    ? genDurationsMs.reduce((sum, ms) => sum + ms, 0) / genDurationsMs.length
+    : null;
+
   const stats = [
     { label: "Total reels", value: totalCount ?? 0 },
     { label: "Ready", value: readyCount ?? 0 },
     { label: "In progress", value: processingCount ?? 0 },
     { label: "Failed", value: failedCount ?? 0 },
+    {
+      label: "Avg generation time",
+      value: avgGenDurationMs !== null ? formatGenDuration(avgGenDurationMs) : "—",
+    },
   ];
 
   return (
@@ -84,7 +121,7 @@ export default async function AdminReelsPage({
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-5">
         {stats.map((s) => (
           <Card key={s.label}>
             <CardHeader className="pb-2">
@@ -115,49 +152,65 @@ export default async function AdminReelsPage({
           {(reels ?? []).length === 0 && (
             <p className="p-4 text-sm text-muted-foreground">No reels match this filter.</p>
           )}
-          {(reels ?? []).map((reel) => (
-            <div key={reel.id} className="flex flex-wrap items-center gap-3 px-4 py-3 text-sm">
-              <div className="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-md bg-muted">
-                {reel.thumb_url ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={reel.thumb_url} alt="" className="size-full object-cover" />
-                ) : (
-                  <Film className="size-5 text-muted-foreground" />
+          {(reels ?? []).map((reel) => {
+            const genJob = genJobByReelId.get(reel.id);
+            const genDurationLabel = genJob?.completed_at
+              ? formatGenDuration(
+                  new Date(genJob.completed_at).getTime() - new Date(genJob.created_at).getTime()
+                )
+              : null;
+
+            return (
+              <div key={reel.id} className="flex flex-wrap items-center gap-3 px-4 py-3 text-sm">
+                <div className="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-md bg-muted">
+                  {reel.thumb_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={reel.thumb_url} alt="" className="size-full object-cover" />
+                  ) : (
+                    <Film className="size-5 text-muted-foreground" />
+                  )}
+                </div>
+
+                <div className="min-w-48 flex-1">
+                  <p className="flex items-center gap-1.5 font-medium">
+                    {reel.title ?? "Untitled reel"}
+                    <Badge
+                      variant={STATUS_BADGE_VARIANT[reel.status] ?? "outline"}
+                      className="text-[10px] capitalize"
+                    >
+                      {reel.status}
+                    </Badge>
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {emailByUserId.get(reel.user_id) ?? "Unknown user"} ·{" "}
+                    {new Date(reel.created_at).toLocaleString()}
+                  </p>
+                </div>
+
+                <p className="text-xs text-muted-foreground">
+                  {reel.image_model ?? "—"}
+                  {reel.duration ? ` · ${reel.duration}s` : ""}
+                  {reel.aspect_ratio ? ` · ${reel.aspect_ratio}` : ""}
+                </p>
+
+                <Badge variant="outline" className="text-[10px]">
+                  {genDurationLabel ? `Generated in ${genDurationLabel}` : "Gen time n/a"}
+                </Badge>
+
+                {reel.video_url && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    nativeButton={false}
+                    render={<a href={reel.video_url} target="_blank" rel="noopener noreferrer" />}
+                  >
+                    <Download className="size-3.5" />
+                    View
+                  </Button>
                 )}
               </div>
-
-              <div className="min-w-48 flex-1">
-                <p className="flex items-center gap-1.5 font-medium">
-                  {reel.title ?? "Untitled reel"}
-                  <Badge variant={STATUS_BADGE_VARIANT[reel.status] ?? "outline"} className="text-[10px] capitalize">
-                    {reel.status}
-                  </Badge>
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {emailByUserId.get(reel.user_id) ?? "Unknown user"} ·{" "}
-                  {new Date(reel.created_at).toLocaleString()}
-                </p>
-              </div>
-
-              <p className="text-xs text-muted-foreground">
-                {reel.image_model ?? "—"}
-                {reel.duration ? ` · ${reel.duration}s` : ""}
-                {reel.aspect_ratio ? ` · ${reel.aspect_ratio}` : ""}
-              </p>
-
-              {reel.video_url && (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  nativeButton={false}
-                  render={<a href={reel.video_url} target="_blank" rel="noopener noreferrer" />}
-                >
-                  <Download className="size-3.5" />
-                  View
-                </Button>
-              )}
-            </div>
-          ))}
+            );
+          })}
         </CardContent>
       </Card>
     </div>

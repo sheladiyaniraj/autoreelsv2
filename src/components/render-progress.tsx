@@ -34,6 +34,12 @@ const STAGE_LABELS: Record<RenderStage, string> = {
 
 const POLL_INTERVAL_MS = 1200;
 
+function formatElapsed(seconds: number): string {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return m > 0 ? `${m}m ${s}s` : `${s}s`;
+}
+
 export function RenderProgress({
   jobId,
   stages = ALL_STAGES,
@@ -46,6 +52,8 @@ export function RenderProgress({
   onFailed: (error: string) => void;
 }) {
   const [stage, setStage] = useState<string>(stages[0]);
+  const [startedAt, setStartedAt] = useState<number | null>(null);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const settledRef = useRef(false);
 
   useEffect(() => {
@@ -56,13 +64,16 @@ export function RenderProgress({
     async function poll() {
       const { data } = await supabase
         .from("render_jobs")
-        .select("stage, status, error")
+        .select("stage, status, error, created_at")
         .eq("id", jobId)
         .single();
 
       if (cancelled || !data || settledRef.current) return;
 
       setStage(data.stage);
+      if (data.created_at) {
+        setStartedAt(new Date(data.created_at).getTime());
+      }
 
       if (data.status === "succeeded") {
         settledRef.current = true;
@@ -85,10 +96,26 @@ export function RenderProgress({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [jobId]);
 
+  useEffect(() => {
+    if (!startedAt) return;
+    const tick = () => {
+      if (settledRef.current) return;
+      setElapsedSeconds(Math.max(0, Math.floor((Date.now() - startedAt) / 1000)));
+    };
+    tick();
+    const interval = setInterval(tick, 1000);
+    return () => clearInterval(interval);
+  }, [startedAt]);
+
   const currentIndex = stages.indexOf(stage as RenderStage);
 
   return (
     <div className="space-y-2 rounded-md border p-4">
+      {startedAt !== null && (
+        <div className="pb-1 text-xs text-muted-foreground">
+          {formatElapsed(elapsedSeconds)} elapsed
+        </div>
+      )}
       {stages.map((s, i) => {
         const isDone = i < currentIndex || (s === "done" && currentIndex === i);
         const isCurrent = i === currentIndex && s !== "done";

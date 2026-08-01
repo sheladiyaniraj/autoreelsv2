@@ -43,9 +43,15 @@ export async function setStage(
 ) {
   "use step";
   const admin = createAdminClient();
+  const now = new Date().toISOString();
   await admin
     .from("render_jobs")
-    .update({ stage, status, updated_at: new Date().toISOString() })
+    .update({
+      stage,
+      status,
+      updated_at: now,
+      ...(status === "succeeded" ? { completed_at: now } : {}),
+    })
     .eq("id", jobId);
 }
 
@@ -236,12 +242,14 @@ export async function stepMarkFailed(
   "use step";
   const admin = createAdminClient();
 
+  const now = new Date().toISOString();
   await admin
     .from("render_jobs")
     .update({
       status: "failed",
       error: errorMessage.slice(0, 500),
-      updated_at: new Date().toISOString(),
+      updated_at: now,
+      completed_at: now,
     })
     .eq("id", jobId);
 

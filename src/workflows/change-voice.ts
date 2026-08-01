@@ -86,12 +86,14 @@ async function stepFinalizeVoiceChange(
 async function stepMarkVoiceChangeFailed(jobId: string, errorMessage: string) {
   "use step";
   const admin = createAdminClient();
+  const now = new Date().toISOString();
   await admin
     .from("render_jobs")
     .update({
       status: "failed",
       error: errorMessage.slice(0, 500),
-      updated_at: new Date().toISOString(),
+      updated_at: now,
+      completed_at: now,
     })
     .eq("id", jobId);
 }
