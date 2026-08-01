@@ -37,6 +37,12 @@ export default function IdeasLayout({ children }: { children: React.ReactNode })
           <Link href="/blog" className="hover:text-foreground">
             Blog
           </Link>
+          <Link href="/privacy" className="hover:text-foreground">
+            Privacy
+          </Link>
+          <Link href="/refund" className="hover:text-foreground">
+            Refund Policy
+          </Link>
         </div>
         © {new Date().getFullYear()} AutoReels. All rights reserved.
       </footer>

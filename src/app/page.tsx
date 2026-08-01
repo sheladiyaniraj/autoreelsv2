@@ -411,6 +411,12 @@ export default function Home() {
           <Link href="/login" className="hover:text-foreground">
             Log in
           </Link>
+          <Link href="/privacy" className="hover:text-foreground">
+            Privacy
+          </Link>
+          <Link href="/refund" className="hover:text-foreground">
+            Refund Policy
+          </Link>
         </div>
         © {new Date().getFullYear()} AutoReels. All rights reserved.
       </footer>

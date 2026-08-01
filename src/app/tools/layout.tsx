@@ -34,6 +34,12 @@ export default function ToolsLayout({ children }: { children: React.ReactNode })
           <Link href="/ideas" className="hover:text-foreground">
             Reel Ideas
           </Link>
+          <Link href="/privacy" className="hover:text-foreground">
+            Privacy
+          </Link>
+          <Link href="/refund" className="hover:text-foreground">
+            Refund Policy
+          </Link>
         </div>
         © {new Date().getFullYear()} AutoReels. All rights reserved.
       </footer>
