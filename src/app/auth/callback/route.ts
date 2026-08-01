@@ -22,20 +22,36 @@ export async function GET(request: Request) {
     const supabase = await createClient();
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error && data.user) {
-      // Only Google and magic-link reach this route now, and both can be
-      // either a first-time signup or a returning login — created_at vs.
-      // "just now" is the only signal available to tell them apart, since
-      // Supabase doesn't otherwise flag "this session came from a brand
-      // new user."
-      const isNewUser = Date.now() - new Date(data.user.created_at).getTime() < 10_000;
+      const admin = createAdminClient();
+
+      // redeem_referral is idempotent (unique on referred_id), so it's safe
+      // to call on every callback that carries a ref — no need to gate it
+      // behind "is this a new user," which used to make referred users who
+      // took >10s to click their magic link silently miss their bonus.
+      if (ref) {
+        await admin.rpc("redeem_referral", {
+          p_referred_id: data.user.id,
+          p_referral_code: ref,
+        });
+      }
+
+      // Magic-link `created_at` is set when the email is *sent*, not when
+      // the link is clicked — clicking almost never happens within 10
+      // seconds, so a wall-clock "just now" check silently missed most
+      // magic-link signups. Instead, atomically claim notified_at: the
+      // first completed callback for this user (whenever that happens)
+      // wins the update and is treated as the signup; every later login
+      // finds it already set and is a no-op.
+      const { data: claimed } = await admin
+        .from("users")
+        .update({ notified_at: new Date().toISOString() })
+        .eq("id", data.user.id)
+        .is("notified_at", null)
+        .select("id")
+        .maybeSingle();
+      const isNewUser = Boolean(claimed);
+
       if (isNewUser) {
-        const admin = createAdminClient();
-        if (ref) {
-          await admin.rpc("redeem_referral", {
-            p_referred_id: data.user.id,
-            p_referral_code: ref,
-          });
-        }
         await track("signup", { referred: Boolean(ref), source });
         if (data.user.email) {
           const { count: totalUsers } = await admin
