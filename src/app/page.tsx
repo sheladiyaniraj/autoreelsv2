@@ -1,17 +1,29 @@
 import Link from "next/link";
 import {
+  BookOpen,
   Captions,
   Check,
   Clapperboard,
+  Gamepad2,
+  Ghost,
   Globe2,
   Layers,
+  Lightbulb,
   Mic,
   Music,
   RefreshCw,
   Sparkles,
+  Trophy,
+  Wallet,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Reveal } from "@/components/marketing/reveal";
 import { PhoneMockup } from "@/components/marketing/phone-mockup";
 import { SUBSCRIPTION_PLANS, type PlanKey } from "@/lib/billing/plans";
@@ -66,6 +78,77 @@ const COMPACT_FEATURES = [
 const PLAN_ORDER: PlanKey[] = ["starter", "pro"];
 
 const WAVEFORM_HEIGHTS = [24, 40, 64, 44, 80, 56, 92, 48, 68, 36, 76, 52, 30, 60, 42, 84];
+
+const HOW_IT_WORKS = [
+  {
+    step: "01",
+    title: "Give it something to start from",
+    description: "A topic, a URL, or a script you've already written.",
+  },
+  {
+    step: "02",
+    title: "Pick a voice and a look",
+    description: "Choose a voice, caption style, and aspect ratio — takes seconds.",
+  },
+  {
+    step: "03",
+    title: "Get a finished reel",
+    description: "Script, voiceover, AI visuals, captions, and music — done, ready to download.",
+  },
+];
+
+const NICHES = [
+  { icon: Sparkles, label: "Motivation & mindset" },
+  { icon: Wallet, label: "Finance & money tips" },
+  { icon: Trophy, label: "Sports & football" },
+  { icon: Gamepad2, label: "Gaming facts & trivia" },
+  { icon: BookOpen, label: "History & facts" },
+  { icon: Ghost, label: "Horror & stories" },
+  { icon: Lightbulb, label: "Life hacks" },
+  { icon: Globe2, label: "Regional languages" },
+];
+
+const FAQS = [
+  {
+    question: "What exactly does AutoReels do?",
+    answer:
+      "It turns a topic, URL, or script into a complete faceless reel — a hook-first script, an AI voiceover, a fresh AI visual for every scene, karaoke-style burned-in captions, and background music, all generated together in one pass.",
+  },
+  {
+    question: "Do I need any editing experience?",
+    answer:
+      "No. The whole pipeline is automated end to end — there's no timeline to cut, no separate app for captions or voiceover. You pick a few options and generate.",
+  },
+  {
+    question: "Does AutoReels post to my TikTok/Instagram/YouTube automatically?",
+    answer:
+      "No — we don't connect to or post on your social accounts. You download the finished reel and publish it yourself, on your own schedule, on whichever platforms you choose.",
+  },
+  {
+    question: "Which languages are supported?",
+    answer:
+      "English, Hindi, Gujarati, Arabic, and more — script, voiceover, and captions stay in sync in whichever language you generate in.",
+  },
+  {
+    question: "Can I change something after a reel is generated?",
+    answer:
+      "Yes. Swap a single scene's visual, or re-voice the entire reel with a different voice, without regenerating everything else from scratch.",
+  },
+  {
+    question: "How many reels can I make?",
+    answer:
+      "You get 3 free reels on signup. After that, Starter gives you 30 reels/month and Pro gives you 100/month — or buy a one-time credit pack if you'd rather not subscribe.",
+  },
+  {
+    question: "Is there a watermark?",
+    answer: "Free-plan reels include a small watermark. Starter and Pro remove it entirely.",
+  },
+  {
+    question: "Can I get a refund?",
+    answer:
+      "Credit purchases and subscriptions are final, but if a generation fails due to a technical error on our end, that credit is refunded to your account automatically. See our full refund policy for details.",
+  },
+];
 
 export default function Home() {
   return (
@@ -177,6 +260,28 @@ export default function Home() {
               />
             </div>
           </Reveal>
+        </section>
+
+        {/* -------------------------------------------------------------- */}
+        {/* How it works                                                   */}
+        {/* -------------------------------------------------------------- */}
+        <section className="border-t border-border/60 py-20">
+          <div className="mx-auto max-w-6xl px-6">
+            <Reveal className="mx-auto max-w-lg text-center">
+              <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+                From idea to reel in three steps
+              </h2>
+            </Reveal>
+            <div className="mt-14 grid gap-10 sm:grid-cols-3 sm:gap-8">
+              {HOW_IT_WORKS.map((step, i) => (
+                <Reveal key={step.step} delay={i * 100}>
+                  <p className="text-sm font-semibold text-muted-foreground/60">{step.step}</p>
+                  <h3 className="mt-3 text-xl font-semibold">{step.title}</h3>
+                  <p className="mt-2 text-muted-foreground">{step.description}</p>
+                </Reveal>
+              ))}
+            </div>
+          </div>
         </section>
 
         {/* -------------------------------------------------------------- */}
@@ -307,6 +412,32 @@ export default function Home() {
         </section>
 
         {/* -------------------------------------------------------------- */}
+        {/* Niches                                                         */}
+        {/* -------------------------------------------------------------- */}
+        <section className="border-t border-border/60 py-20">
+          <div className="mx-auto max-w-5xl px-6">
+            <Reveal className="mx-auto max-w-lg text-center">
+              <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+                Built for whatever you post
+              </h2>
+              <p className="mt-3 text-muted-foreground">
+                Any niche that works as a script and a voiceover works on AutoReels.
+              </p>
+            </Reveal>
+            <div className="mt-10 flex flex-wrap justify-center gap-3">
+              {NICHES.map((niche, i) => (
+                <Reveal key={niche.label} delay={i * 40}>
+                  <div className="flex items-center gap-2 rounded-full border border-border/60 bg-card px-4 py-2 text-sm">
+                    <niche.icon className="size-4 text-muted-foreground" strokeWidth={1.75} />
+                    {niche.label}
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* -------------------------------------------------------------- */}
         {/* Compact feature grid                                           */}
         {/* -------------------------------------------------------------- */}
         <section className="border-t border-border/60 bg-muted/30 py-20">
@@ -372,6 +503,29 @@ export default function Home() {
             <p className="mt-8 text-center text-sm text-muted-foreground">
               No watermark on paid plans. Cancel anytime.
             </p>
+          </div>
+        </section>
+
+        {/* -------------------------------------------------------------- */}
+        {/* FAQ                                                            */}
+        {/* -------------------------------------------------------------- */}
+        <section className="border-t border-border/60 bg-muted/30 py-24 sm:py-32">
+          <div className="mx-auto max-w-2xl px-6">
+            <Reveal className="text-center">
+              <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+                Frequently asked questions
+              </h2>
+            </Reveal>
+            <Reveal delay={100}>
+              <Accordion className="mt-10 rounded-2xl border border-border/60 bg-background px-6">
+                {FAQS.map((faq) => (
+                  <AccordionItem key={faq.question} value={faq.question}>
+                    <AccordionTrigger>{faq.question}</AccordionTrigger>
+                    <AccordionContent>{faq.answer}</AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </Reveal>
           </div>
         </section>
 
