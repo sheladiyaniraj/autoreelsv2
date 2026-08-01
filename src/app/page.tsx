@@ -122,7 +122,7 @@ const FAQS = [
   {
     question: "Does AutoReels post to my TikTok/Instagram/YouTube automatically?",
     answer:
-      "No — we don't connect to or post on your social accounts. You download the finished reel and publish it yourself, on your own schedule, on whichever platforms you choose.",
+      "Not yet — right now you download the finished reel and publish it yourself, on your own schedule, on whichever platforms you choose. Auto-posting is a feature we're launching soon.",
   },
   {
     question: "Which languages are supported?",
