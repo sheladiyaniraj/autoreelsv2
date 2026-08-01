@@ -1,4 +1,5 @@
 export const BLOG_SLUGS = [
+  "capcut-alternative-india",
   "fifa-world-cup-2026-faceless-football-pages",
   "how-to-make-faceless-reels-with-ai",
   "best-ai-voices-for-tiktok-and-instagram-reels",
