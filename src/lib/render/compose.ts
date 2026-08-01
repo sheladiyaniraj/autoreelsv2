@@ -206,13 +206,18 @@ export async function composeVideo({
       outputDuration += END_CARD_SECONDS;
     }
 
+    // Split the final composed stream so the thumbnail is a second output of
+    // this same encode instead of a separate ffmpeg process that re-decodes
+    // the freshly-written mp4 from disk just to grab one frame.
+    filter += ";[vout]split=2[vmain][vthumb]";
+
     await runFfmpeg([
       "-y",
       ...inputArgs,
       "-filter_complex",
       filter,
       "-map",
-      "[vout]",
+      "[vmain]",
       "-map",
       finalAudioMap,
       "-c:v",
@@ -232,9 +237,14 @@ export async function composeVideo({
       "-t",
       String(outputDuration),
       videoPath,
+      "-map",
+      "[vthumb]",
+      "-frames:v",
+      "1",
+      "-ss",
+      "0.5",
+      thumbPath,
     ]);
-
-    await runFfmpeg(["-y", "-i", videoPath, "-ss", "0.5", "-frames:v", "1", thumbPath]);
 
     const [video, thumbnail] = await Promise.all([
       readFile(videoPath),

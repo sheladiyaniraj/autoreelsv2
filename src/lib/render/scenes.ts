@@ -7,6 +7,12 @@ export type ScenePlan = {
   text: string;
   startSecond: number;
   endSecond: number;
+  // Index into the original (pre-merge) sceneTexts array whose visual
+  // should represent this scene. Short adjacent scenes get merged into one
+  // ScenePlan entry by duration (see mergeShortScenes), but each entry
+  // still needs exactly one image — this points back to the first
+  // contributing scene's image rather than requiring a fresh one.
+  sourceIndex: number;
 };
 
 function splitIntoSentences(script: string): string[] {
@@ -28,11 +34,19 @@ function mergeToMaxScenes(sentences: string[]): string[] {
   return merged;
 }
 
+// Scene *text* only depends on the script, not on transcript word timings —
+// callers that want to kick off per-scene visual generation before the
+// voiceover/transcript are ready (they only need `text`) should use this
+// directly instead of waiting on planScenes.
+export function splitScriptIntoSceneTexts(script: string): string[] {
+  return mergeToMaxScenes(splitIntoSentences(script));
+}
+
 export function planScenes(
   script: string,
   words: TranscriptWord[]
 ): ScenePlan[] {
-  const sceneTexts = mergeToMaxScenes(splitIntoSentences(script));
+  const sceneTexts = splitScriptIntoSceneTexts(script);
   return assignSceneTimings(sceneTexts, words, script);
 }
 
@@ -47,7 +61,7 @@ export function assignSceneTimings(
   if (words.length === 0) {
     // No word timestamps available — fall back to a single scene spanning
     // the whole clip so the pipeline still produces something playable.
-    return [{ text: fallbackText, startSecond: 0, endSecond: 0 }];
+    return [{ text: fallbackText, startSecond: 0, endSecond: 0, sourceIndex: 0 }];
   }
 
   const wordsPerScene = sceneTexts.map(
@@ -83,6 +97,7 @@ export function assignSceneTimings(
       text: sceneTexts[i],
       startSecond: sliceWords[0].startSecond,
       endSecond: sliceWords[sliceWords.length - 1].endSecond,
+      sourceIndex: i,
     });
 
     wordCursor = sliceEnd;
@@ -103,6 +118,7 @@ function mergeShortScenes(scenes: ScenePlan[]): ScenePlan[] {
         text: `${prev.text} ${scene.text}`,
         startSecond: prev.startSecond,
         endSecond: scene.endSecond,
+        sourceIndex: prev.sourceIndex,
       };
     } else {
       merged.push({ ...scene });

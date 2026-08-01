@@ -6,7 +6,7 @@ import { transcribeAudio, type TranscriptWord } from "@/lib/providers/transcript
 import { generateVisual, type ReelAspectRatio } from "@/lib/providers/visuals";
 import type { ImageModelKey } from "@/lib/providers/image-models";
 import { composeVideo } from "@/lib/render/compose";
-import { planScenes } from "@/lib/render/scenes";
+import { assignSceneTimings, splitScriptIntoSceneTexts } from "@/lib/render/scenes";
 import { DEFAULT_CAPTION_STYLE, type CaptionStyle } from "@/lib/render/captions";
 import { resolveMusicUrl } from "@/lib/render/music";
 import { recordReelVersion } from "@/lib/render/reel-versions";
@@ -300,34 +300,44 @@ export async function generateReelWorkflow(input: GenerateReelInput) {
     await setStage(jobId, "script");
     const script = await stepGenerateScript(inputType, inputValue);
 
+    // Scene *text* only depends on the script, not on transcript word
+    // timings — so visual generation for every scene can start right away,
+    // running concurrently with voice synthesis + transcription instead of
+    // waiting behind them. Scene *timing* (assignSceneTimings, below) still
+    // needs the transcript and only runs once both branches finish.
+    const sceneTexts = splitScriptIntoSceneTexts(script);
+
     await setStage(jobId, "voice");
-    const { audioUrl } = await stepSynthesizeVoice(
-      reelId,
-      script,
-      voiceName,
-      voiceProvider
+    const visualsPromise = Promise.all(
+      sceneTexts.map((text, i) => stepGenerateVisual(reelId, i, text, aspectRatio, imageModel))
     );
 
-    await setStage(jobId, "transcript");
-    const { words, durationInSeconds } = await stepTranscribe(audioUrl, script);
+    const voicePipelinePromise = (async () => {
+      const { audioUrl } = await stepSynthesizeVoice(reelId, script, voiceName, voiceProvider);
+      await setStage(jobId, "transcript");
+      const { words, durationInSeconds } = await stepTranscribe(audioUrl, script);
+      return { audioUrl, words, durationInSeconds };
+    })();
+
+    const [sceneVisuals, { audioUrl, words, durationInSeconds }] = await Promise.all([
+      visualsPromise,
+      voicePipelinePromise,
+    ]);
 
     await setStage(jobId, "scene_plan");
-    const scenePlan = planScenes(script, words);
-
-    await setStage(jobId, "visuals");
-    const sceneVisuals = await Promise.all(
-      scenePlan.map((scene, i) =>
-        stepGenerateVisual(reelId, i, scene.text, aspectRatio, imageModel)
-      )
-    );
+    const scenePlan = assignSceneTimings(sceneTexts, words, script);
+    // Merging (mergeShortScenes) can produce fewer final scenes than
+    // sceneTexts/sceneVisuals — resolve each final scene's visual via
+    // sourceIndex rather than assuming a 1:1 positional match.
+    const resolvedSceneVisuals = scenePlan.map((scene) => sceneVisuals[scene.sourceIndex]);
 
     await setStage(jobId, "compose");
     const { videoUrl, thumbUrl, durationMs } = await stepComposeVideo(
       reelId,
       audioUrl,
       scenePlan.map((scene, i) => ({
-        imageUrl: sceneVisuals[i].imageUrl,
-        mediaType: sceneVisuals[i].mediaType,
+        imageUrl: resolvedSceneVisuals[i].imageUrl,
+        mediaType: resolvedSceneVisuals[i].mediaType,
         startSecond: scene.startSecond,
         endSecond: scene.endSecond,
       })),
@@ -343,7 +353,7 @@ export async function generateReelWorkflow(input: GenerateReelInput) {
     await stepFinalize(
       reelId,
       scenePlan,
-      sceneVisuals,
+      resolvedSceneVisuals,
       videoUrl,
       thumbUrl,
       durationMs,
