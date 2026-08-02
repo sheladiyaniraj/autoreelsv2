@@ -15,7 +15,7 @@ export default async function AdminUsersPage() {
   const admin = createAdminClient();
   const { data: users } = await admin
     .from("users")
-    .select("id, email, plan, credits, is_admin, banned, created_at")
+    .select("id, email, plan, credits, is_admin, banned, created_at, country")
     .order("created_at", { ascending: false });
 
   return (

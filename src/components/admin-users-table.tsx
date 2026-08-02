@@ -17,6 +17,7 @@ type User = {
   is_admin: boolean;
   banned: boolean;
   created_at: string;
+  country: string | null;
 };
 
 export function AdminUsersTable({
@@ -99,7 +100,7 @@ export function AdminUsersTable({
                 )}
               </p>
               <p className="text-xs text-muted-foreground capitalize">
-                {u.plan} · {u.credits} credits
+                {u.plan} · {u.credits} credits{u.country ? ` · ${u.country}` : ""}
               </p>
             </div>
 

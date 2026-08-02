@@ -44,7 +44,7 @@ export async function GET(request: Request) {
       // finds it already set and is a no-op.
       const { data: claimed } = await admin
         .from("users")
-        .update({ notified_at: new Date().toISOString() })
+        .update({ notified_at: new Date().toISOString(), country })
         .eq("id", data.user.id)
         .is("notified_at", null)
         .select("id")
