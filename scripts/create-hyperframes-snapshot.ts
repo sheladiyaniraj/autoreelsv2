@@ -1,8 +1,8 @@
-import { Snapshot } from "@vercel/sandbox";
 import {
   createFreshSetupSandbox,
   prepareSandbox,
   SNAPSHOT_TTL_MS,
+  sweepStaleSnapshots,
   writeSnapshotPointer,
 } from "../src/lib/hyperframes/sandbox";
 
@@ -40,28 +40,21 @@ async function main() {
     const mb = Math.round(snapshot.sizeBytes / 1024 / 1024);
     console.log(`[create-hyperframes-snapshot] snapshotId=${snapshot.snapshotId} size=${mb}MB`);
 
-    const { previousSnapshotId } = await writeSnapshotPointer({
+    await writeSnapshotPointer({
       deploymentId,
       snapshotId: snapshot.snapshotId,
       token,
     });
 
     // Only one snapshot is ever actually needed (whichever the current
-    // deployment points to) — delete the one this just replaced instead of
-    // letting it sit around for its full 7-day TTL. Best-effort: a failure
-    // here shouldn't fail the deploy, just leaves that one snapshot to
-    // expire naturally.
-    if (previousSnapshotId) {
-      try {
-        const old = await Snapshot.get({ snapshotId: previousSnapshotId });
-        await old.delete();
-        console.log(`[create-hyperframes-snapshot] deleted previous snapshot ${previousSnapshotId}`);
-      } catch (err) {
-        console.warn(
-          `[create-hyperframes-snapshot] couldn't delete previous snapshot ${previousSnapshotId}:`,
-          err
-        );
-      }
+    // deployment points to) — sweep every other one instead of letting it
+    // sit around for its full 7-day TTL. Best-effort: a failure here
+    // shouldn't fail the deploy, just leaves stale snapshots to expire
+    // naturally.
+    try {
+      await sweepStaleSnapshots(snapshot.snapshotId);
+    } catch (err) {
+      console.warn("[create-hyperframes-snapshot] sweep failed:", err);
     }
 
     const s = Math.round((Date.now() - t0) / 1000);

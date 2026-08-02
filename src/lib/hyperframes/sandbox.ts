@@ -1,4 +1,4 @@
-import { Sandbox } from "@vercel/sandbox";
+import { Sandbox, Snapshot } from "@vercel/sandbox";
 import { get, put } from "@vercel/blob";
 
 // Plain Vercel Functions can't host Chromium + FFmpeg (50MB compressed
@@ -13,12 +13,6 @@ export const SNAPSHOT_TTL_MS = 7 * 24 * 3600 * 1000;
 const SANDBOX_OPTS = { runtime: "node22", resources: { vcpus: 4 } } as const;
 
 const pointerKey = (deploymentId: string) => `hyperframes-snapshot-cache/${deploymentId}.json`;
-// Tracks whichever snapshot is currently "latest" across deploys — read
-// before overwriting so the deploy script can delete the one it's
-// replacing. Without this, every deploy leaves its snapshot behind forever
-// (only the 7-day TTL ever reclaims it), which is exactly what blew through
-// the Hobby plan's Snapshot Storage quota after a run of frequent deploys.
-const LATEST_POINTER_KEY = "hyperframes-snapshot-cache/latest.json";
 
 type RunCommandOpts = Parameters<Sandbox["runCommand"]>[0];
 
@@ -77,32 +71,36 @@ export async function writeSnapshotPointer(params: {
   deploymentId: string;
   snapshotId: string;
   token: string;
-}): Promise<{ previousSnapshotId: string | null }> {
-  let previousSnapshotId: string | null = null;
-  try {
-    const existing = await get(LATEST_POINTER_KEY, { access: "public", token: params.token });
-    if (existing && existing.statusCode === 200) {
-      const parsed = (await new Response(existing.stream).json()) as { snapshotId: string };
-      if (parsed.snapshotId !== params.snapshotId) previousSnapshotId = parsed.snapshotId;
-    }
-  } catch {
-    // No "latest" pointer yet — first-ever deploy, nothing to clean up.
-  }
-
-  const jsonBody = JSON.stringify({ snapshotId: params.snapshotId });
-  const putOpts = {
-    access: "public" as const,
+}): Promise<void> {
+  await put(pointerKey(params.deploymentId), JSON.stringify({ snapshotId: params.snapshotId }), {
+    access: "public",
     contentType: "application/json",
     addRandomSuffix: false,
     allowOverwrite: true,
     token: params.token,
-  };
-  await Promise.all([
-    put(pointerKey(params.deploymentId), jsonBody, putOpts),
-    put(LATEST_POINTER_KEY, jsonBody, putOpts),
-  ]);
+  });
+}
 
-  return { previousSnapshotId };
+// Deletes every other non-deleted snapshot for this project, keeping only
+// the one just created. Queries the Sandbox API directly instead of a
+// pointer file: a previous version tracked "latest" in a public Vercel
+// Blob and diffed against it, but a get() shortly after another deploy's
+// put() can return a stale, CDN-cached copy — that let a just-created
+// snapshot dodge cleanup entirely and sit until its 7-day TTL, which is
+// what kept Snapshot Storage creeping back toward full. Re-deriving "what
+// exists" from the API on every call is immune to that race.
+export async function sweepStaleSnapshots(keepSnapshotId: string): Promise<void> {
+  const pages = await Snapshot.list();
+  for await (const snapshot of pages) {
+    if (snapshot.id === keepSnapshotId || snapshot.status !== "created") continue;
+    try {
+      const stale = await Snapshot.get({ snapshotId: snapshot.id });
+      await stale.delete();
+      console.log(`[hyperframes-snapshot] deleted stale snapshot ${snapshot.id}`);
+    } catch (err) {
+      console.warn(`[hyperframes-snapshot] couldn't delete stale snapshot ${snapshot.id}:`, err);
+    }
+  }
 }
 
 async function readSnapshotId(deploymentId: string, token: string): Promise<string> {
