@@ -562,8 +562,17 @@ export default function Home() {
               {link.label}
             </Link>
           ))}
+          <Link href="/features" className="hover:text-foreground">
+            Features
+          </Link>
+          <Link href="/about" className="hover:text-foreground">
+            About
+          </Link>
           <Link href="/login" className="hover:text-foreground">
             Log in
+          </Link>
+          <Link href="/terms" className="hover:text-foreground">
+            Terms
           </Link>
           <Link href="/privacy" className="hover:text-foreground">
             Privacy

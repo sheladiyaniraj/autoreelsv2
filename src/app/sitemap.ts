@@ -7,12 +7,18 @@ import { SITE_URL as BASE_URL } from "@/lib/site";
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: BASE_URL, changeFrequency: "weekly", priority: 1 },
+    { url: `${BASE_URL}/features`, changeFrequency: "monthly", priority: 0.9 },
     { url: `${BASE_URL}/for-instagram`, changeFrequency: "monthly", priority: 0.9 },
     { url: `${BASE_URL}/tools`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${BASE_URL}/blog`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${BASE_URL}/ideas`, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${BASE_URL}/vs/autoreels-vs-canva-for-coaches`, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${BASE_URL}/about`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${BASE_URL}/login`, changeFrequency: "yearly", priority: 0.3 },
     { url: `${BASE_URL}/signup`, changeFrequency: "yearly", priority: 0.5 },
+    { url: `${BASE_URL}/terms`, changeFrequency: "yearly", priority: 0.2 },
+    { url: `${BASE_URL}/privacy`, changeFrequency: "yearly", priority: 0.2 },
+    { url: `${BASE_URL}/refund`, changeFrequency: "yearly", priority: 0.2 },
   ];
 
   const toolRoutes: MetadataRoute.Sitemap = TOOLS.map((tool) => ({
