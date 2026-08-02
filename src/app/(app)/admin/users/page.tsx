@@ -14,9 +14,12 @@ export default async function AdminUsersPage() {
 
   const admin = createAdminClient();
   const { data: users } = await admin
-    .from("users")
-    .select("id, email, plan, credits, is_admin, banned, created_at, country")
+    .from("users_admin")
+    .select("id, email, plan, credits, is_admin, banned, created_at, country, claimed")
     .order("created_at", { ascending: false });
+
+  const activeCount = users?.filter((u) => u.claimed).length ?? 0;
+  const importedCount = (users?.length ?? 0) - activeCount;
 
   return (
     <div className="space-y-6">
@@ -28,7 +31,8 @@ export default async function AdminUsersPage() {
       <div>
         <h1 className="text-2xl font-semibold">Users</h1>
         <p className="text-muted-foreground">
-          {users?.length ?? 0} total — grant credits or suspend an account.
+          {users?.length ?? 0} total — {activeCount} active, {importedCount} imported (not yet
+          signed in) — grant credits or suspend an account.
         </p>
       </div>
 

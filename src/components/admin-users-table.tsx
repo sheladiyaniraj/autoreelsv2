@@ -18,6 +18,7 @@ type User = {
   banned: boolean;
   created_at: string;
   country: string | null;
+  claimed: boolean;
 };
 
 export function AdminUsersTable({
@@ -96,6 +97,11 @@ export function AdminUsersTable({
                 {u.banned && (
                   <Badge variant="outline" className="gap-1 text-[10px] text-destructive">
                     Suspended
+                  </Badge>
+                )}
+                {!u.claimed && (
+                  <Badge variant="outline" className="gap-1 text-[10px]">
+                    Imported · not signed in
                   </Badge>
                 )}
               </p>
