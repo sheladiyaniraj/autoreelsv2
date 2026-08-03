@@ -181,7 +181,7 @@ export function CreateWizard({
   function handleRenderSucceeded() {
     playSuccessSound();
     toast.success("Reel ready!");
-    setShowReview(true);
+    setTimeout(() => setShowReview(true), 2000);
   }
 
   function goToReel() {
