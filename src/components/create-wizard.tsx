@@ -32,6 +32,7 @@ import {
 import { cn } from "@/lib/utils";
 import { playSuccessSound } from "@/lib/play-success-sound";
 import { RenderProgress } from "@/components/render-progress";
+import { ReviewPopup } from "@/components/review-popup";
 import { IMAGE_MODELS, type ImageModelKey } from "@/lib/providers/image-models";
 
 type Voice = {
@@ -84,6 +85,7 @@ export function CreateWizard({
   const [isGenerating, setIsGenerating] = useState(false);
   const [jobId, setJobId] = useState<string | null>(null);
   const [reelId, setReelId] = useState<string | null>(null);
+  const [showReview, setShowReview] = useState(false);
   const [playingVoiceId, setPlayingVoiceId] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -179,6 +181,11 @@ export function CreateWizard({
   function handleRenderSucceeded() {
     playSuccessSound();
     toast.success("Reel ready!");
+    setShowReview(true);
+  }
+
+  function goToReel() {
+    setShowReview(false);
     router.push(`/reels/${reelId}`);
     // The header's credit badge is read in a shared server layout — a plain
     // client-side push reuses the cached layout instead of refetching it,
@@ -585,6 +592,10 @@ export function CreateWizard({
           </Button>
         )}
       </div>
+
+      {reelId && (
+        <ReviewPopup reelId={reelId} open={showReview} onDone={goToReel} />
+      )}
     </div>
   );
 }
