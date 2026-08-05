@@ -1,7 +1,7 @@
 export const metadata = {
   title: "Flux vs Nano Banana 2: Which AI Image Model for Reels?",
   description:
-    "A practical comparison of Flux and Google's Nano Banana 2 for generating B-roll visuals in faceless reels — speed, cost, and prompt accuracy.",
+    "A practical comparison of Flux and Google's Nano Banana 2 for generating B-roll visuals in faceless reels: speed, cost, and prompt accuracy.",
   date: "2026-07-24",
 };
 
@@ -12,7 +12,7 @@ When you're generating a fresh visual for every scene in a reel, the image model
 Flux (from Black Forest Labs) is a fast, general-purpose image model. It's the right default for most reel B-roll.
 
 **Strengths:**
-- Cheap — roughly half the cost per image of Nano Banana 2
+- Cheap: roughly half the cost per image of Nano Banana 2
 - Fast generation, which matters when a reel has 6+ scenes generating in parallel
 - Strong at photorealistic, straightforward scenes: a person at a desk, a city skyline, a plate of food
 
@@ -20,10 +20,10 @@ Flux (from Black Forest Labs) is a fast, general-purpose image model. It's the r
 
 ## Nano Banana 2
 
-Nano Banana 2 (Google's Gemini 3.1 Flash Image) is a multimodal model — it's built on top of a language model, not a dedicated image-only pipeline, which gives it noticeably stronger prompt comprehension.
+Nano Banana 2 (Google's Gemini 3.1 Flash Image) is a multimodal model. It's built on top of a language model, not a dedicated image-only pipeline, which gives it noticeably stronger prompt comprehension.
 
 **Strengths:**
-- Better at complex or unusual scene descriptions — it "understands" the prompt more than it pattern-matches to it
+- Better at complex or unusual scene descriptions: it "understands" the prompt more than it pattern-matches to it
 - Better at maintaining consistency when a scene implies multiple related elements
 - Worth the premium specifically when Flux keeps missing the brief on a particular scene
 
@@ -41,12 +41,12 @@ Nano Banana 2 (Google's Gemini 3.1 Flash Image) is a multimodal model — it's b
 
 ## How to choose in practice
 
-Start with Flux as your default — for the large majority of faceless-reel content (lists, tips, everyday topics), it produces perfectly good matching visuals at a lower cost. Switch to Nano Banana 2 specifically when:
+Start with Flux as your default: for the large majority of faceless-reel content (lists, tips, everyday topics), it produces perfectly good matching visuals at a lower cost. Switch to Nano Banana 2 specifically when:
 
 - Your script has scenes with unusual or very specific combinations ("a vintage typewriter on a modern glass desk with rain visible through a window behind it")
 - You've noticed Flux repeatedly producing visuals that don't quite match a particular type of scene in your content
 - You're producing a smaller volume of higher-stakes content where the extra prompt accuracy is worth the added cost
 
-There's no reason to pick one permanently — the right move is picking per reel, or even letting the choice depend on what a specific scene actually needs.
+There's no reason to pick one permanently. The right move is picking per reel, or even letting the choice depend on what a specific scene actually needs.
 
 [Generate a reel with either model](/signup) and compare the results on your own script.
