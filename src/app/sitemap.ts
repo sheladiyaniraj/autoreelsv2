@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { BLOG_SLUGS } from "@/content/blog/posts";
 import { NICHES } from "@/content/niches";
 import { TOOLS } from "@/content/tools";
+import { CREATORS } from "@/content/creators";
 import { SITE_URL as BASE_URL } from "@/lib/site";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -12,6 +13,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/tools`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${BASE_URL}/blog`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${BASE_URL}/ideas`, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${BASE_URL}/faceless-youtube-channels`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${BASE_URL}/vs/autoreels-vs-canva-for-coaches`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE_URL}/about`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${BASE_URL}/login`, changeFrequency: "yearly", priority: 0.3 },
@@ -45,5 +47,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  return [...staticRoutes, ...toolRoutes, ...blogRoutes, ...ideaRoutes];
+  const creatorRoutes: MetadataRoute.Sitemap = CREATORS.map((creator) => ({
+    url: `${BASE_URL}/faceless-youtube-channels/${creator.slug}`,
+    changeFrequency: "weekly",
+    priority: 0.6,
+  }));
+
+  return [...staticRoutes, ...toolRoutes, ...blogRoutes, ...ideaRoutes, ...creatorRoutes];
 }

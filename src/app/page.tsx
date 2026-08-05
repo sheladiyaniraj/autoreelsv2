@@ -55,6 +55,7 @@ const NAV_LINKS = [
   { href: "/tools", label: "Free Tools" },
   { href: "/blog", label: "Blog" },
   { href: "/ideas", label: "Reel Ideas" },
+  { href: "/faceless-youtube-channels", label: "Faceless Channels" },
 ];
 
 const COMPACT_FEATURES = [
