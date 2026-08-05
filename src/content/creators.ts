@@ -58,6 +58,46 @@ export const CREATORS: Creator[] = [
       "Built an entire media brand around luxury, wealth, and self-improvement list content, over 3,000 videos, without ever putting a host on camera. Narration plus B-roll plus a strong list-format hook is the whole formula.",
     tags: ["Narration", "Lists"],
   },
+  {
+    slug: "bright-side",
+    channelId: "UC4rlAVgAK0SGk-yTfe48Qpw",
+    category: "Facts & edutainment",
+    whyItWorks:
+      "One of the largest faceless channels on the platform: nearly 12,000 videos of narrated science, psychology, and self-improvement explainers over animated and stock visuals. Proof the format scales to an enormous catalog without ever needing a host.",
+    tags: ["Narration", "Facts"],
+  },
+  {
+    slug: "magnatesmedia",
+    channelId: "UCE4Gn00XZbpWvGUfIslT-tA",
+    category: "Business documentary",
+    whyItWorks:
+      "Narrated 'mini movies' about how business empires are built and lost, cinematic B-roll and pacing standing in for any on-camera host. Shows the format works for longer, more researched scripts too, not just short hooks.",
+    tags: ["Narration", "Business"],
+  },
+  {
+    slug: "company-man",
+    channelId: "UCQMyhrt92_8XM0KgZH6VnRg",
+    category: "Business documentary",
+    whyItWorks:
+      "Deep-dive narrated histories of well-known companies, built entirely from voiceover, archival footage, and stock visuals. A good example of research-driven, long-form faceless content in a category most people assume needs a host.",
+    tags: ["Narration", "Business"],
+  },
+  {
+    slug: "modern-mba",
+    channelId: "UCbzVRTkX3bzNZuBd9In4XyA",
+    category: "Business strategy",
+    whyItWorks:
+      "Narrated deep-dives into company financials and strategy, no host, no camera, just a script and voice carrying genuinely dense material. Proof the format isn't limited to easy, surface-level topics.",
+    tags: ["Narration", "Business"],
+  },
+  {
+    slug: "logically-answered",
+    channelId: "UCZRoNJu1OszFqABP8AuJIuw",
+    category: "Tech & economics",
+    whyItWorks:
+      "Explains the economics behind tech and social media companies through narration alone, the creator writes and voices every video without ever appearing on camera. A clean faceless format for a niche usually dominated by on-camera commentary.",
+    tags: ["Narration", "Tech"],
+  },
 ];
 
 export function getCreator(slug: string): Creator | undefined {
