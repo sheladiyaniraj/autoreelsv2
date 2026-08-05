@@ -4,7 +4,7 @@ import { NICHES } from "@/content/niches";
 import { TOOLS } from "@/content/tools";
 import { SITE_URL as BASE_URL } from "@/lib/site";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: BASE_URL, changeFrequency: "weekly", priority: 1 },
     { url: `${BASE_URL}/features`, changeFrequency: "monthly", priority: 0.9 },
@@ -27,11 +27,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
-  const blogRoutes: MetadataRoute.Sitemap = BLOG_SLUGS.map((slug) => ({
-    url: `${BASE_URL}/blog/${slug}`,
-    changeFrequency: "monthly",
-    priority: 0.6,
-  }));
+  const blogRoutes: MetadataRoute.Sitemap = await Promise.all(
+    BLOG_SLUGS.map(async (slug) => {
+      const mod = (await import(`@/content/blog/${slug}.mdx`)) as { metadata: { date: string } };
+      return {
+        url: `${BASE_URL}/blog/${slug}`,
+        lastModified: new Date(mod.metadata.date),
+        changeFrequency: "monthly" as const,
+        priority: 0.6,
+      };
+    })
+  );
 
   const ideaRoutes: MetadataRoute.Sitemap = NICHES.map((niche) => ({
     url: `${BASE_URL}/ideas/${niche.slug}`,
