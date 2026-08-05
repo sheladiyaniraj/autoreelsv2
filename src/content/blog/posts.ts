@@ -1,4 +1,5 @@
 export const BLOG_SLUGS = [
+  "why-i-built-autoreels",
   "minecraft-gaming-reels-with-ai",
   "capcut-alternative-india",
   "fifa-world-cup-2026-faceless-football-pages",
