@@ -19,7 +19,7 @@ import { Reveal } from "@/components/marketing/reveal";
 export const metadata: Metadata = {
   title: "Features",
   description:
-    "Everything AutoReels automates to turn a topic into a finished faceless reel — script, voiceover, AI visuals, captions, music, and editing, in detail.",
+    "Everything AutoReels automates to turn a topic into a finished faceless reel: script, voiceover, AI visuals, captions, music, and editing, in detail.",
 };
 
 const FEATURES = [
@@ -27,31 +27,31 @@ const FEATURES = [
     icon: Sparkles,
     title: "AI script from any topic",
     description:
-      "Give it a topic, a URL, or your own script — get a hook-first, 60-90 word narration back in seconds, sized for a 25-35 second reel.",
+      "Give it a topic, a URL, or your own script. Get a hook-first, 60-90 word narration back in seconds, sized for a 25-35 second reel.",
   },
   {
     icon: Mic,
     title: "Natural voiceover",
     description:
-      "Pick from OpenAI and ElevenLabs voices with real previews before you commit — no recording your own voice.",
+      "Pick from OpenAI and ElevenLabs voices with real previews before you commit, no recording your own voice.",
   },
   {
     icon: Layers,
     title: "AI B-roll, per scene",
     description:
-      "Choose Flux or Google's Nano Banana 2 to generate a fresh, on-topic visual for every scene automatically — no stock footage that almost fits.",
+      "Choose Flux or Google's Nano Banana 2 to generate a fresh, on-topic visual for every scene automatically, no stock footage that almost fits.",
   },
   {
     icon: Captions,
     title: "Karaoke-style captions",
     description:
-      "Word-by-word highlighted captions, burned in and timed automatically from the voiceover — built for the majority of viewers watching on mute.",
+      "Word-by-word highlighted captions, burned in and timed automatically from the voiceover, built for the majority of viewers watching on mute.",
   },
   {
     icon: Music,
     title: "Auto-ducked music",
     description:
-      "Background music that automatically drops under your voiceover and comes back up in the gaps — no manual mixing.",
+      "Background music that automatically drops under your voiceover and comes back up in the gaps, no manual mixing.",
   },
   {
     icon: RefreshCw,
@@ -63,25 +63,25 @@ const FEATURES = [
     icon: Globe2,
     title: "Multi-language",
     description:
-      "English, Hindi, Gujarati, Arabic, and more — script, voice, and captions stay in sync in whichever language you generate in.",
+      "English, Hindi, Gujarati, Arabic, and more: script, voice, and captions stay in sync in whichever language you generate in.",
   },
   {
     icon: SquareStack,
     title: "9:16, 1:1, or 16:9",
     description:
-      "One input, the right export for Reels/Shorts/TikTok, a feed post, or YouTube — no manual cropping after the fact.",
+      "One input, the right export for Reels/Shorts/TikTok, a feed post, or YouTube, no manual cropping after the fact.",
   },
   {
     icon: ScanFace,
     title: "Faceless by design",
     description:
-      "Every reel is fully AI-generated — no camera, no filming, no on-camera anxiety.",
+      "Every reel is fully AI-generated: no camera, no filming, no on-camera anxiety.",
   },
   {
     icon: Download,
     title: "Download, HD",
     description:
-      "Export the finished MP4 directly — no watermark on paid plans.",
+      "Export the finished MP4 directly, no watermark on paid plans.",
   },
 ];
 
@@ -122,8 +122,8 @@ export default function FeaturesPage() {
           </Reveal>
           <Reveal delay={100}>
             <p className="mt-6 text-lg text-balance text-muted-foreground sm:text-xl">
-              One generation covers the whole pipeline — script, voice, visuals, captions, and
-              music — instead of chaining together five separate tools.
+              One generation covers the whole pipeline: script, voice, visuals, captions, and
+              music, instead of chaining together five separate tools.
             </p>
           </Reveal>
           <Reveal delay={180}>

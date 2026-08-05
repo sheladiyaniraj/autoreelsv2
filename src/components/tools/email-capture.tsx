@@ -29,7 +29,7 @@ export function EmailCapture({ tool }: { tool: string }) {
     return (
       <div className="flex items-center gap-2 rounded-md border bg-muted/30 px-3 py-2.5 text-sm text-muted-foreground">
         <Check className="size-4 text-primary" />
-        You&apos;re in — we&apos;ll send more free tools and tips your way.
+        You&apos;re in, we&apos;ll send more free tools and tips your way.
       </div>
     );
   }

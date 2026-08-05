@@ -63,7 +63,7 @@ export function SceneEditor({
       <div>
         <h2 className="text-sm font-medium">Scenes</h2>
         <p className="text-xs text-muted-foreground">
-          Swap a scene&apos;s visual and the reel re-renders — no need to redo
+          Swap a scene&apos;s visual and the reel re-renders, no need to redo
           the script or voice.
         </p>
       </div>

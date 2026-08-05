@@ -18,7 +18,7 @@ export default async function LibraryPage() {
       <div>
         <h1 className="text-2xl font-semibold">Library</h1>
         <p className="text-muted-foreground">
-          All your reels in one place — search, filter, download, or delete.
+          All your reels in one place: search, filter, download, or delete.
         </p>
       </div>
 

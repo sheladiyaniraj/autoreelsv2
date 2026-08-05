@@ -42,14 +42,14 @@ export default function TermsPage() {
 
           <h2>The Service</h2>
           <p>
-            AutoReels turns a topic, URL, or script you provide into an AI-generated video —
+            AutoReels turns a topic, URL, or script you provide into an AI-generated video:
             script, voiceover, visuals, captions, and music. You choose what to generate and what
             to do with the result; we don&apos;t publish or post anything on your behalf.
           </p>
 
           <h2>Your account</h2>
           <ul>
-            <li>You need an account to generate reels. Keep your login credentials secure — you&apos;re responsible for activity on your account.</li>
+            <li>You need an account to generate reels. Keep your login credentials secure, you&apos;re responsible for activity on your account.</li>
             <li>You must be at least 13 years old to use the Service.</li>
             <li>One person, one account. Don&apos;t create multiple accounts to get around credit limits.</li>
           </ul>
@@ -71,9 +71,9 @@ export default function TermsPage() {
           <p>
             You own what you generate with AutoReels. We don&apos;t claim ownership over your
             scripts, voiceovers, or finished videos. To provide the Service, you grant us a
-            license to process, store, and transmit that content — including sending it to the
+            license to process, store, and transmit that content (including sending it to the
             third-party AI providers listed in our{" "}
-            <Link href="/privacy">Privacy Policy</Link> — solely to generate and deliver it back
+            <Link href="/privacy">Privacy Policy</Link>) solely to generate and deliver it back
             to you.
           </p>
           <p>
@@ -91,7 +91,7 @@ export default function TermsPage() {
           <h2>Service availability</h2>
           <p>
             We aim to keep AutoReels running reliably, but we don&apos;t guarantee uninterrupted
-            access — third-party AI providers, hosting, or payment processors can have outages
+            access: third-party AI providers, hosting, or payment processors can have outages
             outside our control. If a generation fails due to a technical error on our end, the
             credit is automatically refunded.
           </p>
@@ -99,7 +99,7 @@ export default function TermsPage() {
           <h2>Disclaimers &amp; limitation of liability</h2>
           <p>
             The Service is provided &ldquo;as is,&rdquo; without warranties of any kind. AI-generated
-            content can be inaccurate — verify any factual claims before publishing. To the
+            content can be inaccurate. Verify any factual claims before publishing. To the
             extent permitted by law, AutoReels isn&apos;t liable for indirect, incidental, or
             consequential damages arising from your use of the Service, and our total liability
             is limited to the amount you paid us in the past 3 months.

@@ -10,7 +10,7 @@ export async function POST(request: Request) {
   const allowed = await checkRateLimit(ip, "script-generator", 10, 60);
   if (!allowed) {
     return NextResponse.json(
-      { error: "Too many requests — try again in a bit." },
+      { error: "Too many requests, try again in a bit." },
       { status: 429 }
     );
   }
@@ -31,6 +31,6 @@ export async function POST(request: Request) {
     await track("tool_used", { tool: "script-generator" });
     return NextResponse.json({ script });
   } catch {
-    return NextResponse.json({ error: "Couldn't generate a script — try again" }, { status: 500 });
+    return NextResponse.json({ error: "Couldn't generate a script, try again" }, { status: 500 });
   }
 }

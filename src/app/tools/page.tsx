@@ -7,7 +7,7 @@ import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/ca
 export const metadata: Metadata = {
   title: "Free Tools for Short-Form Video Creators",
   description:
-    "Free, no-signup tools for TikTok, Reels, and Shorts creators — hashtag generator, AI voiceover, script generator, video transcripts, and caption burn-in.",
+    "Free, no-signup tools for TikTok, Reels, and Shorts creators: hashtag generator, AI voiceover, script generator, video transcripts, and caption burn-in.",
 };
 
 export default function ToolsIndexPage() {
@@ -20,7 +20,7 @@ export default function ToolsIndexPage() {
         </h1>
         <p className="text-muted-foreground">
           Free, no-signup tools for short-form video creators. No account
-          needed — just use them.
+          needed, just use them.
         </p>
       </div>
 

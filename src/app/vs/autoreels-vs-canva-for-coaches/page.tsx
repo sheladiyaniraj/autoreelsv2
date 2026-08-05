@@ -68,8 +68,8 @@ export default function VsCanvaPage() {
           <Reveal delay={160}>
             <p className="mt-6 text-lg text-balance text-muted-foreground sm:text-xl">
               If you&apos;re a coach posting quote graphics, worksheets, and carousels, Canva is
-              genuinely excellent for that. But a narrated, faceless video reel is a different job
-              — one Canva wasn&apos;t built to automate.
+              genuinely excellent for that. But a narrated, faceless video reel is a different job,
+              one Canva wasn&apos;t built to automate.
             </p>
           </Reveal>
           <Reveal delay={240}>
@@ -91,7 +91,7 @@ export default function VsCanvaPage() {
                 They solve different problems
               </h2>
               <p className="mt-3 text-muted-foreground">
-                Most coaches end up using both — for different content, not the same job.
+                Most coaches end up using both, for different content, not the same job.
               </p>
             </Reveal>
 
@@ -131,7 +131,7 @@ export default function VsCanvaPage() {
             <Reveal delay={160}>
               <p className="mt-6 text-center text-sm text-muted-foreground">
                 Canva added some AI and video tooling over time, but it&apos;s still a general
-                design tool at heart — you&apos;re editing a template, not generating a narrated
+                design tool at heart: you&apos;re editing a template, not generating a narrated
                 video from a topic in one step.
               </p>
             </Reveal>
@@ -146,7 +146,7 @@ export default function VsCanvaPage() {
               </h2>
               <p className="mt-4 text-muted-foreground">
                 Client testimonials, &ldquo;3 mistakes I see coaches make,&rdquo; a quick mindset tip, a
-                program announcement — the content that actually grows a coaching audience is
+                program announcement. The content that actually grows a coaching audience is
                 usually a person talking, not a static graphic. AutoReels turns that idea into a
                 voiced, captioned reel without you filming yourself or writing a script from
                 scratch. Keep Canva for your worksheets and carousels; use AutoReels for the

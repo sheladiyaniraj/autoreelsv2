@@ -195,7 +195,7 @@ export function CreateWizard({
 
   function handleRenderFailed(error: string) {
     toast.error("Couldn't generate your reel", {
-      description: `${error} — your credit was refunded.`,
+      description: `${error} (your credit was refunded).`,
     });
     setIsGenerating(false);
     setJobId(null);
@@ -302,7 +302,7 @@ export function CreateWizard({
                 onChange={(e) => setScript(e.target.value)}
               />
               <p className="text-xs text-muted-foreground">
-                Edit line by line — this is exactly what gets voiced and
+                Edit line by line. This is exactly what gets voiced and
                 captioned.
               </p>
             </div>
@@ -422,7 +422,7 @@ export function CreateWizard({
                 </div>
                 <p className="text-xs text-muted-foreground">
                   B-roll will be auto-matched per scene using{" "}
-                  {IMAGE_MODELS[imageModel].label} — you&apos;ll be able to
+                  {IMAGE_MODELS[imageModel].label}, you&apos;ll be able to
                   swap any clip here after generation.
                 </p>
               </div>
@@ -559,7 +559,7 @@ export function CreateWizard({
                   </Button>
                   {isGenerating && (
                     <p className="text-center text-xs text-muted-foreground">
-                      Queuing your reel — this can take a minute once it
+                      Queuing your reel. This can take a minute once it
                       starts.
                     </p>
                   )}

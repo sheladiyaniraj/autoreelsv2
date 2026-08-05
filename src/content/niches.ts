@@ -21,11 +21,11 @@ export const NICHES: Niche[] = [
       "Rich people don't budget the way you think they do.",
     ],
     scriptSnippet:
-      '"Nobody told you this about your 401k until it was too late. If your employer matches contributions and you\'re not putting in enough to get the full match, you\'re leaving free money on the table — every single paycheck. Check your plan today and bump it up to at least the match threshold. Follow for more money mistakes nobody warns you about."',
+      '"Nobody told you this about your 401k until it was too late. If your employer matches contributions and you\'re not putting in enough to get the full match, you\'re leaving free money on the table, every single paycheck. Check your plan today and bump it up to at least the match threshold. Follow for more money mistakes nobody warns you about."',
     tips: [
-      "Lead with a specific dollar amount or number — \"$340 in fees\" outperforms \"a lot of money\" almost every time.",
+      "Lead with a specific dollar amount or number: \"$340 in fees\" outperforms \"a lot of money\" almost every time.",
       "Screen-recording style B-roll (a phone showing a banking app, a calculator, a spreadsheet) reads as more credible than generic stock footage for this niche.",
-      "Avoid generic advice like \"save more\" — specificity (a named fee, a named account type) is what makes finance content feel earned rather than obvious.",
+      "Avoid generic advice like \"save more\": specificity (a named fee, a named account type) is what makes finance content feel earned rather than obvious.",
     ],
   },
   {
@@ -41,11 +41,11 @@ export const NICHES: Niche[] = [
       "Your gym trainer never told you this about rest days.",
     ],
     scriptSnippet:
-      '"You\'ve been doing squats wrong your entire life. If your knees cave inward at the bottom of the movement, it\'s not weakness — it\'s a mobility issue in your ankles. Spend two minutes before every leg day on ankle circles and ankle-to-wall stretches. Follow for more form fixes that actually matter."',
+      '"You\'ve been doing squats wrong your entire life. If your knees cave inward at the bottom of the movement, it\'s not weakness: it\'s a mobility issue in your ankles. Spend two minutes before every leg day on ankle circles and ankle-to-wall stretches. Follow for more form fixes that actually matter."',
     tips: [
-      "Fitness content benefits from close-up, focused B-roll (a single joint, a piece of equipment) over wide generic gym shots — it signals \"this is specifically about the thing I'm describing.\"",
+      "Fitness content benefits from close-up, focused B-roll (a single joint, a piece of equipment) over wide generic gym shots: it signals \"this is specifically about the thing I'm describing.\"",
       "Myth-busting hooks (\"stop doing X\") consistently outperform generic motivation (\"you can do this\") for watch time in this niche.",
-      "Keep the body of the script to one specific, actionable fix — fitness reels trying to cover 3 exercises at once lose viewers halfway through.",
+      "Keep the body of the script to one specific, actionable fix: fitness reels trying to cover 3 exercises at once lose viewers halfway through.",
     ],
   },
   {
@@ -61,9 +61,9 @@ export const NICHES: Niche[] = [
       "The market data your realtor isn't showing you.",
     ],
     scriptSnippet:
-      '"The closing cost nobody explains until you\'re already signing. Beyond your down payment, expect 2-5% of the home price in closing costs — title fees, inspection, appraisal, and lender fees. Ask for a loan estimate upfront so there are no surprises at the table. Follow for more of what buyers wish they knew first."',
+      '"The closing cost nobody explains until you\'re already signing. Beyond your down payment, expect 2-5% of the home price in closing costs: title fees, inspection, appraisal, and lender fees. Ask for a loan estimate upfront so there are no surprises at the table. Follow for more of what buyers wish they knew first."',
     tips: [
-      "Real estate reels perform best when they read as genuinely educational rather than promotional — save the direct pitch for your bio link, not the hook.",
+      "Real estate reels perform best when they read as genuinely educational rather than promotional. Save the direct pitch for your bio link, not the hook.",
       "Local specificity (a neighborhood name, a local market stat) beats generic national advice for engagement from people actually house-hunting nearby.",
       "B-roll of interiors, paperwork, and neighborhoods reads more credible here than abstract finance-style visuals.",
     ],
@@ -76,23 +76,23 @@ export const NICHES: Niche[] = [
     hooks: [
       "You're applying your skincare in the wrong order and it's wasting the good ingredients.",
       "This $12 ingredient works better than the $80 serum everyone's hyping.",
-      "Stop layering retinol with this — it's canceling itself out.",
+      "Stop layering retinol with this: it's canceling itself out.",
       "The skincare step everyone skips that actually matters most.",
       "Dermatologists don't recommend this trending routine, here's why.",
     ],
     scriptSnippet:
       '"You\'re applying your skincare in the wrong order and it\'s wasting the good ingredients. The rule is thinnest to thickest: cleanser, toner, serum, moisturizer, then SPF in the morning. Applying a heavy moisturizer before a serum blocks it from absorbing at all. Follow for more routine fixes that actually change your results."',
     tips: [
-      "This niche can be entirely faceless with close-up product/ingredient B-roll — no need for skin close-ups, which also sidesteps a lot of comparison-based negativity in comments.",
+      "This niche can be entirely faceless with close-up product/ingredient B-roll, no need for skin close-ups, which also sidesteps a lot of comparison-based negativity in comments.",
       "Ingredient-specific hooks (naming an actual compound) outperform vague \"glow up\" framing and read as more trustworthy.",
-      "Pair every claim with a concrete \"why\" in one sentence — beauty audiences are skeptical of unexplained claims after years of trend-chasing content.",
+      "Pair every claim with a concrete \"why\" in one sentence: beauty audiences are skeptical of unexplained claims after years of trend-chasing content.",
     ],
   },
   {
     slug: "parenting",
     name: "Parenting",
     tagline:
-      "Practical tips and reassurance for tired parents — the kind of content that gets saved and shared, not just liked.",
+      "Practical tips and reassurance for tired parents: the kind of content that gets saved and shared, not just liked.",
     hooks: [
       "The bedtime mistake that was making my toddler's sleep worse, not better.",
       "Nobody tells you this about the 2-year molars.",
@@ -101,11 +101,11 @@ export const NICHES: Niche[] = [
       "What I wish someone told me before my first week home with a newborn.",
     ],
     scriptSnippet:
-      '"The bedtime mistake that was making my toddler\'s sleep worse, not better. We were putting her down the second she looked tired — but overtired kids actually resist sleep harder. Watch for the first yawn, not the meltdown, and start the wind-down routine right then. Follow for more of what actually worked for us."',
+      '"The bedtime mistake that was making my toddler\'s sleep worse, not better. We were putting her down the second she looked tired, but overtired kids actually resist sleep harder. Watch for the first yawn, not the meltdown, and start the wind-down routine right then. Follow for more of what actually worked for us."',
     tips: [
-      "Personal-experience framing (\"what worked for us\") outperforms prescriptive advice (\"you should\") in this niche — parents are wary of being told what to do.",
+      "Personal-experience framing (\"what worked for us\") outperforms prescriptive advice (\"you should\") in this niche: parents are wary of being told what to do.",
       "Save-worthy content (a specific technique, phrase, or schedule) gets shared in parent group chats far more than general encouragement content.",
-      "Warm, calm-paced voiceover works better here than high-energy delivery — match the tone to an exhausted target audience.",
+      "Warm, calm-paced voiceover works better here than high-energy delivery: match the tone to an exhausted target audience.",
     ],
   },
   {
@@ -121,10 +121,10 @@ export const NICHES: Niche[] = [
       "Stop booking hotels this way if you want the best price.",
     ],
     scriptSnippet:
-      '"The booking mistake that cost me $400 on my last trip. I booked round-trip instead of two one-way tickets — splitting them across different airlines actually came out $400 cheaper for the same dates. Always price-check both ways before you book. Follow for more travel mistakes worth avoiding."',
+      '"The booking mistake that cost me $400 on my last trip. I booked round-trip instead of two one-way tickets: splitting them across different airlines actually came out $400 cheaper for the same dates. Always price-check both ways before you book. Follow for more travel mistakes worth avoiding."',
     tips: [
       "Specific dollar savings or time savings (\"$400 cheaper,\" \"two hours saved\") drive far more saves than generic \"travel tips\" framing.",
-      "AI-generated destination B-roll works well for aspirational/planning content — pair it with practical, unglamorous advice in the voiceover for contrast that builds credibility.",
+      "AI-generated destination B-roll works well for aspirational/planning content: pair it with practical, unglamorous advice in the voiceover for contrast that builds credibility.",
       "Budget and mistake-avoidance content consistently outperforms generic \"top 10 places to visit\" lists, which are oversaturated.",
     ],
   },
@@ -132,7 +132,7 @@ export const NICHES: Niche[] = [
     slug: "tech-gadgets",
     name: "Tech & Gadgets",
     tagline:
-      "Explainers, comparisons, and settings nobody knows about — the kind of practical tech content that ranks and shares well.",
+      "Explainers, comparisons, and settings nobody knows about: the kind of practical tech content that ranks and shares well.",
     hooks: [
       "This phone setting is draining your battery and it's on by default.",
       "You've been charging your laptop wrong this whole time.",
@@ -145,7 +145,7 @@ export const NICHES: Niche[] = [
     tips: [
       "Screen-recording style B-roll (settings menus, app interfaces) is both cheap to generate and reads as highly credible for this niche specifically.",
       "\"You've been doing X wrong\" framing works exceptionally well in tech because almost every viewer has a device the tip applies to directly.",
-      "Keep the fix to one specific setting or app per reel — bundling three tips together measurably hurts completion rate in this niche.",
+      "Keep the fix to one specific setting or app per reel: bundling three tips together measurably hurts completion rate in this niche.",
     ],
   },
   {
@@ -161,11 +161,11 @@ export const NICHES: Niche[] = [
       "3 ingredients you're throwing away that you should actually be using.",
     ],
     scriptSnippet:
-      '"You\'re storing your bread wrong and it\'s going stale twice as fast. The fridge actually speeds up staling — room temperature in a bread box, or the freezer for anything longer than three days. Never the fridge. Follow for more kitchen mistakes worth fixing."',
+      '"You\'re storing your bread wrong and it\'s going stale twice as fast. The fridge actually speeds up staling: room temperature in a bread box, or the freezer for anything longer than three days. Never the fridge. Follow for more kitchen mistakes worth fixing."',
     tips: [
-      "This niche works well as narrated-explainer content even without real cooking footage — AI-generated ingredient/kitchen visuals pair naturally with a voiceover-led \"mistake and fix\" structure.",
+      "This niche works well as narrated-explainer content even without real cooking footage: AI-generated ingredient/kitchen visuals pair naturally with a voiceover-led \"mistake and fix\" structure.",
       "Specific, testable claims (\"twice as fast,\" \"three days\") outperform vague framing (\"it goes bad faster\") for both credibility and shareability.",
-      "Ingredient-swap and mistake-fix formats consistently outperform full recipe walkthroughs for short-form — save full recipes for longer-form content.",
+      "Ingredient-swap and mistake-fix formats consistently outperform full recipe walkthroughs for short-form. Save full recipes for longer-form content.",
     ],
   },
 ];

@@ -64,7 +64,7 @@ export function BulkItemStatus({ reelId, jobId }: { reelId: string; jobId: strin
       <Link href={`/reels/${reelId}`}>
         <Badge variant="secondary" className="gap-1 hover:underline">
           <Check className="size-3" />
-          Ready — view
+          Ready, view
         </Badge>
       </Link>
     );

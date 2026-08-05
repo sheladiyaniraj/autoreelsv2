@@ -16,14 +16,14 @@ export const IMAGE_MODELS: Record<
 > = {
   flux: {
     label: "Flux",
-    description: "Fast, photorealistic — the default.",
+    description: "Fast, photorealistic. The default.",
     gatewayId: "bfl/flux-pro-1.1",
     priceLabel: "~$0.04/image",
     kind: "image",
   },
   "nano-banana-2": {
     label: "Nano Banana 2",
-    description: "Google's Gemini 3.1 Flash Image — strong prompt understanding.",
+    description: "Google's Gemini 3.1 Flash Image, strong prompt understanding.",
     gatewayId: "google/gemini-3.1-flash-image",
     priceLabel: "~$0.07/image",
     kind: "language",

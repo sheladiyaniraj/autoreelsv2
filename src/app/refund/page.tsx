@@ -42,15 +42,15 @@ export default function RefundPage() {
           <h2>All sales are final</h2>
           <p>
             We don&apos;t offer refunds on subscription charges or credit pack purchases. Each
-            reel you generate has a real, immediate cost — AI voice, image, and script generation
-            all happen the moment you hit generate — so once a credit has been spent, or a
+            reel you generate has a real, immediate cost: AI voice, image, and script generation
+            all happen the moment you hit generate, so once a credit has been spent, or a
             subscription period has started, we can&apos;t reverse that charge.
           </p>
 
           <h2>Failed generations are automatically refunded</h2>
           <p>
             If a reel fails to generate because of a technical error on our end, the credit it
-            would have used is automatically returned to your account — no need to contact us.
+            would have used is automatically returned to your account. No need to contact us.
             You&apos;ll see this reflected in your credit balance right away.
           </p>
 
@@ -58,20 +58,20 @@ export default function RefundPage() {
           <p>
             You can cancel your subscription at any time from your billing settings. Cancellation
             stops future renewal charges, but we don&apos;t prorate or refund the current billing
-            period — you keep access and any remaining credits until the period you&apos;ve
+            period. You keep access and any remaining credits until the period you&apos;ve
             already paid for ends.
           </p>
 
           <h2>Unused credits</h2>
           <p>
             Credit packs don&apos;t expire, and subscription credits don&apos;t roll over between
-            billing periods — but in either case, unused credits aren&apos;t refundable for cash.
+            billing periods, but in either case, unused credits aren&apos;t refundable for cash.
           </p>
 
           <h2>Billing problems</h2>
           <p>
             Duplicate charges, a payment that didn&apos;t apply the right plan, or anything that
-            looks like an error on our side — email us before opening a chargeback and we&apos;ll
+            looks like an error on our side. Email us before opening a chargeback and we&apos;ll
             sort it out directly.
           </p>
 

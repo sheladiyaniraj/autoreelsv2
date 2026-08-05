@@ -12,7 +12,7 @@ export async function POST(request: Request) {
   const allowed = await checkRateLimit(ip, "instagram-downloader", 5, 60);
   if (!allowed) {
     return NextResponse.json(
-      { error: "Too many requests — try again in a bit." },
+      { error: "Too many requests, try again in a bit." },
       { status: 429 }
     );
   }
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
   } catch (err) {
     console.error("instagram-downloader failed:", err);
     return NextResponse.json(
-      { error: "Couldn't download that reel — it may be private or unavailable" },
+      { error: "Couldn't download that reel, it may be private or unavailable" },
       { status: 500 }
     );
   }

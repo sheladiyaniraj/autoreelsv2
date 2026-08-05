@@ -25,7 +25,7 @@ export default function InstagramDownloaderPage() {
             <strong className="text-foreground">Please use responsibly:</strong>{" "}
             only download reels you own, have permission to use, or are
             saving for personal reference. Respect creators&apos; rights and
-            Instagram&apos;s Terms of Service — this tool is provided for
+            Instagram&apos;s Terms of Service. This tool is provided for
             personal, lawful use.
           </p>
         </>

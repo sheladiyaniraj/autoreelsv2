@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const title = "AutoReels — AI Faceless Reel Generator";
+const title = "AutoReels | AI Faceless Reel Generator";
 const description =
   "Turn a topic, script, or URL into a finished faceless short-form video with AI voiceover, captions, B-roll, and music. Free to try.";
 
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
     default: title,
-    template: "%s — AutoReels",
+    template: "%s | AutoReels",
   },
   description,
   openGraph: {

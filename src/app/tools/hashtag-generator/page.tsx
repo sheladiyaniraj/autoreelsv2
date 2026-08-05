@@ -18,7 +18,7 @@ export default function HashtagGeneratorPage() {
           <h2 className="text-base font-medium text-foreground">How it works</h2>
           <p>
             This tool uses an AI model to read your topic or caption and
-            suggest a mix of broad-discovery and niche-specific hashtags —
+            suggest a mix of broad-discovery and niche-specific hashtags,
             the same mix a good social media manager would pick by hand. It
             works for TikTok, Instagram Reels, and YouTube Shorts captions
             alike.

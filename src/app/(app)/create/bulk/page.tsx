@@ -24,7 +24,7 @@ export default async function BulkCreatePage() {
       <div className="mb-6">
         <h1 className="text-2xl font-semibold">Bulk generate</h1>
         <p className="text-muted-foreground">
-          Pick shared settings once, then paste a list of topics — one reel
+          Pick shared settings once, then paste a list of topics: one reel
           per line, each using 1 credit.
         </p>
       </div>

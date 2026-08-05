@@ -61,7 +61,7 @@ const COMPACT_FEATURES = [
   {
     icon: Music,
     title: "Music that ducks itself",
-    description: "Background music drops under your voiceover automatically — no manual mixing.",
+    description: "Background music drops under your voiceover automatically, no manual mixing.",
   },
   {
     icon: RefreshCw,
@@ -71,7 +71,7 @@ const COMPACT_FEATURES = [
   {
     icon: Globe2,
     title: "Speaks your audience's language",
-    description: "Hindi, Gujarati, Arabic, and more — script, voice, and captions all in sync.",
+    description: "Hindi, Gujarati, Arabic, and more: script, voice, and captions all in sync.",
   },
 ];
 
@@ -88,12 +88,12 @@ const HOW_IT_WORKS = [
   {
     step: "02",
     title: "Pick a voice and a look",
-    description: "Choose a voice, caption style, and aspect ratio — takes seconds.",
+    description: "Choose a voice, caption style, and aspect ratio, takes seconds.",
   },
   {
     step: "03",
     title: "Get a finished reel",
-    description: "Script, voiceover, AI visuals, captions, and music — done, ready to download.",
+    description: "Script, voiceover, AI visuals, captions, and music, done, ready to download.",
   },
 ];
 
@@ -112,22 +112,22 @@ const FAQS = [
   {
     question: "What exactly does AutoReels do?",
     answer:
-      "It turns a topic, URL, or script into a complete faceless reel — a hook-first script, an AI voiceover, a fresh AI visual for every scene, karaoke-style burned-in captions, and background music, all generated together in one pass.",
+      "It turns a topic, URL, or script into a complete faceless reel: a hook-first script, an AI voiceover, a fresh AI visual for every scene, karaoke-style burned-in captions, and background music, all generated together in one pass.",
   },
   {
     question: "Do I need any editing experience?",
     answer:
-      "No. The whole pipeline is automated end to end — there's no timeline to cut, no separate app for captions or voiceover. You pick a few options and generate.",
+      "No. The whole pipeline is automated end to end: there's no timeline to cut, no separate app for captions or voiceover. You pick a few options and generate.",
   },
   {
     question: "Does AutoReels post to my TikTok/Instagram/YouTube automatically?",
     answer:
-      "Not yet — right now you download the finished reel and publish it yourself, on your own schedule, on whichever platforms you choose. Auto-posting is a feature we're launching soon.",
+      "Not yet. Right now you download the finished reel and publish it yourself, on your own schedule, on whichever platforms you choose. Auto-posting is a feature we're launching soon.",
   },
   {
     question: "Which languages are supported?",
     answer:
-      "English, Hindi, Gujarati, Arabic, and more — script, voiceover, and captions stay in sync in whichever language you generate in.",
+      "English, Hindi, Gujarati, Arabic, and more: script, voiceover, and captions stay in sync in whichever language you generate in.",
   },
   {
     question: "Can I change something after a reel is generated?",
@@ -137,7 +137,7 @@ const FAQS = [
   {
     question: "How many reels can I make?",
     answer:
-      "You get 3 free reels on signup. After that, Starter gives you 30 reels/month and Pro gives you 100/month — or buy a one-time credit pack if you'd rather not subscribe.",
+      "You get 3 free reels on signup. After that, Starter gives you 30 reels/month and Pro gives you 100/month, or buy a one-time credit pack if you'd rather not subscribe.",
   },
   {
     question: "Is there a watermark?",
@@ -216,7 +216,7 @@ export default function Home() {
             <Reveal delay={160}>
               <p className="mt-6 max-w-xl text-lg text-balance text-muted-foreground sm:text-xl">
                 Give it a topic, a script, or a link. Get a fully edited, captioned,
-                faceless reel back — ready for Instagram, TikTok, or Shorts.
+                faceless reel back, ready for Instagram, TikTok, or Shorts.
               </p>
             </Reveal>
 
@@ -299,7 +299,7 @@ export default function Home() {
                 </h2>
                 <p className="mt-5 text-lg text-muted-foreground">
                   Drop in a topic, a URL, or your own script. Get a hook-first
-                  narration back in seconds, then pick from natural AI voices —
+                  narration back in seconds, then pick from natural AI voices,
                   with real previews before you commit.
                 </p>
               </div>
@@ -368,7 +368,7 @@ export default function Home() {
                 </h2>
                 <p className="mt-5 text-lg text-muted-foreground">
                   No stock footage that almost fits. Every sentence in your
-                  script gets a fresh, on-topic image generated for it — pick
+                  script gets a fresh, on-topic image generated for it. Pick
                   Flux for speed or Nano Banana 2 for tricky prompts.
                 </p>
                 <div className="mt-6 flex items-center gap-2 text-sm text-muted-foreground">
@@ -396,7 +396,7 @@ export default function Home() {
                 <p className="mt-5 text-lg text-muted-foreground">
                   Most short-form video is watched on mute. Karaoke-style
                   captions highlight word by word, perfectly timed to the
-                  voiceover — burned in, no separate editing app required.
+                  voiceover, burned in, no separate editing app required.
                 </p>
                 <div className="mt-6 flex items-center gap-2 text-sm text-muted-foreground">
                   <Captions className="size-4" />

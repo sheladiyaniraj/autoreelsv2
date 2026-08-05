@@ -13,7 +13,7 @@ export async function POST(request: Request) {
   const allowed = await checkRateLimit(ip, "ai-voiceover", 5, 60);
   if (!allowed) {
     return NextResponse.json(
-      { error: "Too many requests — try again in a bit." },
+      { error: "Too many requests, try again in a bit." },
       { status: 429 }
     );
   }
@@ -41,6 +41,6 @@ export async function POST(request: Request) {
       headers: { "Content-Type": mediaType },
     });
   } catch {
-    return NextResponse.json({ error: "Couldn't generate audio — try again" }, { status: 500 });
+    return NextResponse.json({ error: "Couldn't generate audio, try again" }, { status: 500 });
   }
 }

@@ -58,12 +58,12 @@ export default async function BillingPage({
 
       {checkout === "success" && (
         <div className="rounded-md border border-primary/30 bg-primary/5 px-4 py-3 text-sm">
-          Payment successful — your credits have been added.
+          Payment successful, your credits have been added.
         </div>
       )}
       {checkout === "cancelled" && (
         <div className="rounded-md border px-4 py-3 text-sm text-muted-foreground">
-          Checkout cancelled — no charge was made.
+          Checkout cancelled, no charge was made.
         </div>
       )}
 
@@ -131,7 +131,7 @@ export default async function BillingPage({
           <Card>
             <CardContent className="space-y-3 pt-6">
               <p className="text-sm text-muted-foreground">
-                Share your link — you both get 2 bonus credits when someone
+                Share your link, you both get 2 bonus credits when someone
                 signs up with it.
                 {referralCount ? ` ${referralCount} referral${referralCount === 1 ? "" : "s"} so far.` : ""}
               </p>

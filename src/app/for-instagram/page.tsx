@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   description:
     "Build a faceless Instagram Reels page without filming or editing. AutoReels writes the script, records the voiceover, generates visuals, and burns in captions automatically.",
   openGraph: {
-    title: "AI Instagram Reels Generator — AutoReels",
+    title: "AI Instagram Reels Generator | AutoReels",
     description:
       "Build a faceless Instagram Reels page without filming or editing. Script, voiceover, visuals, and captions, generated automatically.",
   },
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
 
 const STATS = [
   { icon: Timer, label: "Minutes, not hours", description: "From a topic to a finished Reel in one sitting." },
-  { icon: Sparkles, label: "No camera required", description: "Every Reel is fully AI-generated — no filming, no face." },
+  { icon: Sparkles, label: "No camera required", description: "Every Reel is fully AI-generated: no filming, no face." },
   { icon: Zap, label: "Batch-friendly", description: "Queue a week of Reels in one afternoon with bulk create." },
 ];
 
@@ -35,12 +35,12 @@ const FEATURES = [
   {
     icon: Sparkles,
     title: "Hook-first scripts",
-    description: "Every script opens with a pattern-interrupt hook built for the first two seconds — the window where Instagram decides whether to keep pushing your Reel.",
+    description: "Every script opens with a pattern-interrupt hook built for the first two seconds: the window where Instagram decides whether to keep pushing your Reel.",
   },
   {
     icon: Mic,
     title: "Natural AI voiceover",
-    description: "Real OpenAI and ElevenLabs voices with previews before you commit — no recording your own voice.",
+    description: "Real OpenAI and ElevenLabs voices with previews before you commit, no recording your own voice.",
   },
   {
     icon: Captions,
@@ -50,7 +50,7 @@ const FEATURES = [
   {
     icon: Layers,
     title: "9:16, Reels-native",
-    description: "Every Reel renders full-bleed vertical at 1080×1920 — no cropping or letterboxing after export.",
+    description: "Every Reel renders full-bleed vertical at 1080×1920, no cropping or letterboxing after export.",
   },
   {
     icon: Clapperboard,
@@ -103,7 +103,7 @@ export default function ForInstagramPage() {
           <p className="max-w-xl text-base text-muted-foreground sm:text-lg">
             Build a faceless Instagram Reels page without filming or editing.
             AutoReels writes the script, records the voiceover, generates the
-            visuals, and burns in the captions — automatically.
+            visuals, and burns in the captions, automatically.
           </p>
           <Button size="lg" nativeButton={false} render={<Link href="/signup" />}>
             <Sparkles className="size-4" />
@@ -129,7 +129,7 @@ export default function ForInstagramPage() {
             The fastest way to grow a faceless Instagram page
           </h2>
           <p className="text-muted-foreground">
-            The Instagram algorithm rewards accounts that post consistently —
+            The Instagram algorithm rewards accounts that post consistently,
             but writing, recording, and editing a Reel by hand takes real
             time. AutoReels collapses that whole process into one step, so
             you can queue a week&apos;s worth of Reels in a single sitting

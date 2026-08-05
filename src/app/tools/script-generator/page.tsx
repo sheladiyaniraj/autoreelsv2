@@ -20,7 +20,7 @@ export default function ScriptGeneratorPage() {
             Give it a topic (or a URL to summarize) and it writes a
             60-90 word narration script: a scroll-stopping hook in the
             first sentence, the actual value in the body, and a call to
-            action at the end — the same structure that drives retention
+            action at the end, the same structure that drives retention
             on short-form video.
           </p>
         </>

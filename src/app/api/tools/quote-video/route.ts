@@ -21,7 +21,7 @@ export async function POST(request: Request) {
   const allowed = await checkRateLimit(ip, "quote-video", 3, 60);
   if (!allowed) {
     return NextResponse.json(
-      { error: "Too many requests — try again in a bit." },
+      { error: "Too many requests, try again in a bit." },
       { status: 429 }
     );
   }
@@ -85,7 +85,7 @@ export async function POST(request: Request) {
   } catch (err) {
     console.error("[quote-video] render failed:", err);
     return NextResponse.json(
-      { error: "Couldn't render that video — try again" },
+      { error: "Couldn't render that video, try again" },
       { status: 500 }
     );
   }

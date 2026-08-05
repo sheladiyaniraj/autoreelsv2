@@ -3,7 +3,7 @@ import { ToolPageShell } from "@/components/tools/tool-page-shell";
 import { TranscriptForm } from "@/components/tools/transcript-form";
 
 export const metadata: Metadata = {
-  title: "Free Video Transcript Generator — Video to Text",
+  title: "Free Video Transcript Generator | Video to Text",
   description:
     "Upload a video or audio file and get an accurate text transcript, plus downloadable .txt and .srt files. Free, no signup required.",
 };

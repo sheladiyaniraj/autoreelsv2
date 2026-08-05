@@ -110,7 +110,7 @@ export default async function AdminOverviewPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold">Admin</h1>
-        <p className="text-muted-foreground">Internal overview — not visible to regular users.</p>
+        <p className="text-muted-foreground">Internal overview, not visible to regular users.</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
@@ -126,8 +126,8 @@ export default async function AdminOverviewPage() {
 
       <p className="text-xs text-muted-foreground">
         Revenue and AI cost figures are estimates from local ledger data and
-        known per-unit provider prices, not live billing reconciliation —
-        useful as a directional signal, not exact accounting.
+        known per-unit provider prices, not live billing reconciliation.
+        Useful as a directional signal, not exact accounting.
       </p>
 
       <Card>

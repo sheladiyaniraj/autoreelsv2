@@ -48,7 +48,7 @@ export async function generateMetadata({
 
   return {
     title,
-    description: "Made with AutoReels — turn any topic into a faceless reel.",
+    description: "Made with AutoReels: turn any topic into a faceless reel.",
     openGraph: {
       title,
       type: "video.other",

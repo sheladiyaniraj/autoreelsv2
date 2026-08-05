@@ -34,8 +34,8 @@ export function ToolPageShell({
           Want the full reel, not just this piece?
         </h2>
         <p className="max-w-sm text-sm text-muted-foreground">
-          AutoReels turns a topic into a finished faceless reel — script,
-          voiceover, visuals, captions, and music — in one step.
+          AutoReels turns a topic into a finished faceless reel: script,
+          voiceover, visuals, captions, and music, in one step.
         </p>
         <Button size="lg" nativeButton={false} render={<Link href="/signup" />}>
           <Sparkles className="size-4" />

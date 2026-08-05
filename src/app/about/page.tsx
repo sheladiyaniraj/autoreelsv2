@@ -32,7 +32,7 @@ export default function AboutPage() {
           <h1>About AutoReels</h1>
 
           <p>
-            AutoReels is built by a 23-year-old student, working out of Surat, India — mostly
+            AutoReels is built by a 23-year-old student, working out of Surat, India, mostly
             solo, mostly in public. There&apos;s no studio, no production team behind it, just a
             product built to solve a problem that&apos;s obvious once you&apos;ve tried to post
             short-form video consistently: writing, voicing, filming or sourcing visuals, and
@@ -42,7 +42,7 @@ export default function AboutPage() {
 
           <h2>Why this exists</h2>
           <p>
-            Faceless content — reels with no one on camera — was the obvious answer for creators
+            Faceless content (reels with no one on camera) was the obvious answer for creators
             who wanted to post without filming themselves. But &ldquo;faceless&rdquo; still meant
             stitching together a script, a text-to-speech tool, stock footage, and a captioning
             app by hand. AutoReels exists to collapse that whole pipeline into one step: give it a
@@ -52,11 +52,11 @@ export default function AboutPage() {
           <h2>Built in public</h2>
           <p>
             This is a young product, still being shaped by what people actually use it for. Some
-            of the biggest use cases on the platform — like the{" "}
+            of the biggest use cases on the platform (like the{" "}
             <Link href="/blog/fifa-world-cup-2026-faceless-football-pages">
               surge of football/FIFA content
             </Link>{" "}
-            during the 2026 World Cup — weren&apos;t things anyone planned for; they showed up in
+            during the 2026 World Cup) weren&apos;t things anyone planned for; they showed up in
             the generation data and became worth building around. That&apos;s the intended way
             this grows: watching what real usage looks like, and following it.
           </p>
@@ -64,12 +64,12 @@ export default function AboutPage() {
           <h2>Get in touch</h2>
           <p>
             Feedback, bug reports, feature requests, or just want to say what you&apos;re using
-            AutoReels for — email{" "}
+            AutoReels for, email{" "}
             <a href="mailto:ceo@autoreels.in">ceo@autoreels.in</a>. Every message gets read.
           </p>
 
           <p>
-            <Link href="/signup">Try AutoReels free</Link> — 3 reels, no card required.
+            <Link href="/signup">Try AutoReels free</Link>, 3 reels, no card required.
           </p>
         </article>
       </main>

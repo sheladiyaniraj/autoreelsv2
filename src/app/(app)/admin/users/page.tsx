@@ -31,8 +31,8 @@ export default async function AdminUsersPage() {
       <div>
         <h1 className="text-2xl font-semibold">Users</h1>
         <p className="text-muted-foreground">
-          {users?.length ?? 0} total — {activeCount} active, {importedCount} imported (not yet
-          signed in) — grant credits or suspend an account.
+          {users?.length ?? 0} total: {activeCount} active, {importedCount} imported (not yet
+          signed in). Grant credits or suspend an account.
         </p>
       </div>
 

@@ -116,7 +116,7 @@ export default async function AdminReelsPage({
       <div>
         <h1 className="text-2xl font-semibold">Reels</h1>
         <p className="text-muted-foreground">
-          Every reel generated across all users — most recent 200
+          Every reel generated across all users, most recent 200
           {statusFilter !== "all" ? `, filtered to ${statusFilter}` : ""}.
         </p>
       </div>

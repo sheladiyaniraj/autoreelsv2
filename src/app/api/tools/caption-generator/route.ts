@@ -17,7 +17,7 @@ export async function POST(request: Request) {
   const allowed = await checkRateLimit(ip, "caption-generator", 3, 60);
   if (!allowed) {
     return NextResponse.json(
-      { error: "Too many requests — try again in a bit." },
+      { error: "Too many requests, try again in a bit." },
       { status: 429 }
     );
   }
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Upload a video file" }, { status: 400 });
   }
   if (file.size > MAX_FILE_SIZE) {
-    return NextResponse.json({ error: "File is too large — max 25MB" }, { status: 400 });
+    return NextResponse.json({ error: "File is too large, max 25MB" }, { status: 400 });
   }
 
   try {
@@ -50,7 +50,7 @@ export async function POST(request: Request) {
     });
   } catch {
     return NextResponse.json(
-      { error: "Couldn't process that video — try a different one" },
+      { error: "Couldn't process that video, try a different one" },
       { status: 500 }
     );
   }

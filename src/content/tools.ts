@@ -18,7 +18,7 @@ export const TOOLS: Tool[] = [
   {
     slug: "ai-voiceover",
     name: "AI Voiceover Generator",
-    description: "Paste text, get a natural AI voiceover MP3 — no editing software required.",
+    description: "Paste text, get a natural AI voiceover MP3, no editing software required.",
   },
   {
     slug: "video-transcript",

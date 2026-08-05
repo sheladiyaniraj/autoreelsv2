@@ -43,8 +43,8 @@ export default function PrivacyPage() {
           <h2>Information we collect</h2>
           <ul>
             <li>
-              <strong>Account information.</strong> Your email address, and — if you sign in with
-              Google — your name and profile photo as provided by Google. We use Supabase to
+              <strong>Account information.</strong> Your email address and, if you sign in with
+              Google, your name and profile photo as provided by Google. We use Supabase to
               handle authentication and store account records.
             </li>
             <li>
@@ -53,7 +53,7 @@ export default function PrivacyPage() {
             </li>
             <li>
               <strong>Payment information.</strong> Subscriptions and credit purchases are
-              processed by Stripe. We never see or store your full card number — Stripe handles
+              processed by Stripe. We never see or store your full card number. Stripe handles
               that directly and shares back only what we need to manage your plan (e.g. your
               subscription status and a customer reference ID).
             </li>
@@ -67,7 +67,7 @@ export default function PrivacyPage() {
 
           <h2>How we use this information</h2>
           <ul>
-            <li>To operate the Service — generate your reels, manage your account and credits.</li>
+            <li>To operate the Service: generate your reels, manage your account and credits.</li>
             <li>To process payments and apply the correct plan/credits to your account.</li>
             <li>To send transactional communications, like sign-in links.</li>
             <li>To understand how the Service is used and improve it.</li>
@@ -82,25 +82,25 @@ export default function PrivacyPage() {
           </p>
           <ul>
             <li>
-              <strong>Supabase</strong> — database, authentication, and file storage for
+              <strong>Supabase:</strong> database, authentication, and file storage for
               account/reel records.
             </li>
             <li>
-              <strong>Vercel</strong> — application hosting, video/image file storage (Blob), and
+              <strong>Vercel:</strong> application hosting, video/image file storage (Blob), and
               analytics.
             </li>
             <li>
-              <strong>Stripe</strong> — payment processing and subscription management.
+              <strong>Stripe:</strong> payment processing and subscription management.
             </li>
             <li>
-              <strong>Anthropic, OpenAI, and Google</strong> — script generation, voice
+              <strong>Anthropic, OpenAI, and Google:</strong> script generation, voice
               transcription, and AI image generation.
             </li>
             <li>
-              <strong>ElevenLabs and Sarvam AI</strong> — AI voiceover generation.
+              <strong>ElevenLabs and Sarvam AI:</strong> AI voiceover generation.
             </li>
             <li>
-              <strong>Google Analytics, Google Tag Manager, and Microsoft Clarity</strong> —
+              <strong>Google Analytics, Google Tag Manager, and Microsoft Clarity:</strong>
               product usage analytics.
             </li>
           </ul>
@@ -115,7 +115,7 @@ export default function PrivacyPage() {
           <p>
             We use cookies and similar technology for authentication (keeping you signed in) and
             for the analytics tools listed above. You can block cookies in your browser, though
-            parts of the Service — including staying signed in — may not work correctly if you do.
+            parts of the Service (including staying signed in) may not work correctly if you do.
           </p>
 
           <h2>Data retention</h2>
@@ -154,7 +154,7 @@ export default function PrivacyPage() {
 
           <h2>Contact</h2>
           <p>
-            Questions, data requests, or anything else — email{" "}
+            Questions, data requests, or anything else, email{" "}
             <a href="mailto:ceo@autoreels.in">ceo@autoreels.in</a>.
           </p>
         </article>

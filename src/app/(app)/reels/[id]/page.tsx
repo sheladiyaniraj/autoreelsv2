@@ -98,7 +98,7 @@ export default async function ReelPage({
       ) : reel.status === "processing" || reel.status === "queued" ? (
         <Card className="border-dashed">
           <CardContent className="py-12 text-center text-sm text-muted-foreground">
-            Still rendering — refresh in a moment.
+            Still rendering, refresh in a moment.
           </CardContent>
         </Card>
       ) : (

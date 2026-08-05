@@ -12,7 +12,7 @@ export async function POST(request: Request) {
   const allowed = await checkRateLimit(ip, "subscribe", 10, 60);
   if (!allowed) {
     return NextResponse.json(
-      { error: "Too many requests — try again in a bit." },
+      { error: "Too many requests, try again in a bit." },
       { status: 429 }
     );
   }
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
   const { error } = await admin.from("email_leads").insert({ email, source_tool: tool });
 
   if (error) {
-    return NextResponse.json({ error: "Couldn't save that — try again" }, { status: 500 });
+    return NextResponse.json({ error: "Couldn't save that, try again" }, { status: 500 });
   }
 
   await track("email_captured", { tool });

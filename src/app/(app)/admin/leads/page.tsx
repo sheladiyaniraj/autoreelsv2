@@ -36,7 +36,7 @@ export default async function AdminLeadsPage() {
         <h1 className="text-2xl font-semibold">Free tool leads</h1>
         <p className="text-muted-foreground">
           {leads?.length ?? 0} email{leads?.length === 1 ? "" : "s"} captured from the free
-          tools — not yet emailed anywhere.
+          tools, not yet emailed anywhere.
         </p>
       </div>
 

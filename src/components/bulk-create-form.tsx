@@ -90,7 +90,7 @@ export function BulkCreateForm({
             // Out of credits — stop queuing the rest rather than failing
             // each remaining item one by one.
             for (let j = i + 1; j < items.length; j++) {
-              items[j] = { ...items[j], error: "Skipped — out of credits" };
+              items[j] = { ...items[j], error: "Skipped: out of credits" };
             }
             setBatch([...items]);
             break;
@@ -231,7 +231,7 @@ export function BulkCreateForm({
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <Label htmlFor="topics">Topics — one per line</Label>
+              <Label htmlFor="topics">Topics (one per line)</Label>
               <span className="text-xs text-muted-foreground">
                 {topics.length}/{MAX_TOPICS} · {credits} credits available
               </span>

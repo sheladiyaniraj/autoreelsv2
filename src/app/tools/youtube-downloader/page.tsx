@@ -24,8 +24,8 @@ export default function YoutubeDownloaderPage() {
             <strong className="text-foreground">Please use responsibly:</strong>{" "}
             only download videos you own, have permission to use, or that
             are otherwise clearly permitted (e.g. Creative Commons, public
-            domain). Respect copyright and YouTube&apos;s Terms of Service —
-            this tool is provided for personal, lawful use.
+            domain). Respect copyright and YouTube&apos;s Terms of Service.
+            This tool is provided for personal, lawful use.
           </p>
         </>
       }
