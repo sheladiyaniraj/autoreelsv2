@@ -3,6 +3,7 @@ import { track } from "@vercel/analytics/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { notifySignup } from "@/lib/slack";
+import { sendWelcomeEmail } from "@/lib/email";
 
 function describeAuthMethod(provider: string | undefined): string {
   if (provider === "google") return "google";
@@ -63,6 +64,10 @@ export async function GET(request: Request) {
             country,
             source,
             totalUsers: totalUsers ?? null,
+          });
+          await sendWelcomeEmail({
+            email: data.user.email,
+            name: data.user.user_metadata?.full_name ?? data.user.user_metadata?.name ?? null,
           });
         }
       }
