@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import {
   BookOpen,
@@ -27,6 +28,10 @@ import {
 import { Reveal } from "@/components/marketing/reveal";
 import { PhoneMockup } from "@/components/marketing/phone-mockup";
 import { SUBSCRIPTION_PLANS, type PlanKey } from "@/lib/billing/plans";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 const HERO_VIDEO =
   "https://2pdbyk39rsrkdlfq.public.blob.vercel-storage.com/reels/58a2fa1b-dd27-4f86-b2ac-8e02877657bf/video-1785565164466.mp4";
