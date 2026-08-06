@@ -7,9 +7,11 @@ import {
   Library,
   Plus,
   ShieldCheck,
+  Sparkles,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -87,6 +89,12 @@ export default async function AppLayout({
             <Badge variant="secondary" className="gap-1">
               {profile?.credits ?? 0} credits
             </Badge>
+            {profile?.plan !== "pro" && (
+              <Button size="sm" nativeButton={false} render={<Link href="/billing" />}>
+                <Sparkles className="size-4" />
+                Upgrade
+              </Button>
+            )}
             <DropdownMenu>
               <DropdownMenuTrigger render={<button className="outline-none" />}>
                 <Avatar className="size-8">
