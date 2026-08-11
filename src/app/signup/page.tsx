@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { Mail } from "lucide-react";
 import { GoogleIcon } from "@/components/icons/google-icon";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { signInWithGoogle, signInWithMagicLink } from "@/lib/actions/auth";
-import { extractSignupSource } from "@/lib/site";
+import { extractSignupSource, SIGNUP_SOURCE_COOKIE } from "@/lib/site";
 
 export default async function SignupPage({
   searchParams,
@@ -21,12 +21,15 @@ export default async function SignupPage({
   searchParams: Promise<{ error?: string; ref?: string; magicSent?: string }>;
 }) {
   const { error, ref, magicSent } = await searchParams;
-  // Captured here (page load, when the Referer header still points at
-  // whichever page the visitor actually clicked "Sign up" from) and
-  // threaded through as a hidden field, since by the time the form POSTs
-  // as a Server Action the Referer would just say "/signup" itself.
+  // Prefer the first-touch source captured in proxy.ts when the visitor
+  // first arrived (e.g. "chatgpt.com"), since by now the Referer header
+  // only points at whichever internal page they clicked "Sign up" from.
+  // Falls back to that immediate Referer when the cookie isn't set (e.g.
+  // cookies blocked, or this *is* the first-touch page and proxy hasn't
+  // had a chance to round-trip a Set-Cookie back to the browser yet).
+  const firstTouchSource = (await cookies()).get(SIGNUP_SOURCE_COOKIE)?.value;
   const refererHeader = (await headers()).get("referer");
-  const signupSource = extractSignupSource(refererHeader);
+  const signupSource = firstTouchSource ?? extractSignupSource(refererHeader);
 
   return (
     <div className="flex min-h-svh items-center justify-center p-6">
