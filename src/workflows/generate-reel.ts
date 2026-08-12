@@ -1,4 +1,4 @@
-import { put } from "@vercel/blob";
+import { del, put } from "@vercel/blob";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { generateScript, type ScriptInputType } from "@/lib/providers/script";
 import { synthesizeVoice } from "@/lib/providers/voice";
@@ -272,6 +272,18 @@ export async function stepMarkFailed(
   }
 }
 
+// Best-effort: called from a workflow's catch block with whatever blob URLs
+// it uploaded before failing. Those blobs never make it into a reels/scenes/
+// reel_versions row on a failure path, so nothing else ever cleans them up —
+// this is what let hundreds of orphaned scene images and voice clips pile up
+// in Blob storage until it hit the plan quota.
+export async function stepCleanupBlobs(urls: string[]) {
+  "use step";
+  await del(urls).catch((err) => {
+    console.warn("Failed to clean up blobs after failed workflow run", err);
+  });
+}
+
 // ---- Workflow orchestrator ----
 
 export async function generateReelWorkflow(input: GenerateReelInput) {
@@ -293,6 +305,11 @@ export async function generateReelWorkflow(input: GenerateReelInput) {
   } = input;
   const resolvedCaptionStyle = captionStyle ?? DEFAULT_CAPTION_STYLE;
   const musicUrl = resolveMusicUrl(musicId);
+  // Tracks every blob this run uploads, so a failure anywhere downstream can
+  // clean them up — pushed as each step *resolves*, not read off the
+  // Promise.all results, since one rejecting sibling would otherwise lose
+  // the URLs of scenes that already finished uploading.
+  const uploadedBlobUrls: string[] = [];
 
   try {
     await markReelProcessing(reelId);
@@ -309,11 +326,16 @@ export async function generateReelWorkflow(input: GenerateReelInput) {
 
     await setStage(jobId, "voice");
     const visualsPromise = Promise.all(
-      sceneTexts.map((text, i) => stepGenerateVisual(reelId, i, text, aspectRatio, imageModel))
+      sceneTexts.map(async (text, i) => {
+        const visual = await stepGenerateVisual(reelId, i, text, aspectRatio, imageModel);
+        uploadedBlobUrls.push(visual.imageUrl);
+        return visual;
+      })
     );
 
     const voicePipelinePromise = (async () => {
       const { audioUrl } = await stepSynthesizeVoice(reelId, script, voiceName, voiceProvider);
+      uploadedBlobUrls.push(audioUrl);
       await setStage(jobId, "transcript");
       const { words, durationInSeconds } = await stepTranscribe(audioUrl, script);
       return { audioUrl, words, durationInSeconds };
@@ -348,6 +370,7 @@ export async function generateReelWorkflow(input: GenerateReelInput) {
       musicUrl,
       watermark
     );
+    uploadedBlobUrls.push(videoUrl, thumbUrl);
 
     await setStage(jobId, "upload");
     await stepFinalize(
@@ -366,6 +389,9 @@ export async function generateReelWorkflow(input: GenerateReelInput) {
     return { reelId, status: "ready" as const };
   } catch (err) {
     await stepMarkFailed(jobId, reelId, userId, extractErrorMessage(err));
+    if (uploadedBlobUrls.length > 0) {
+      await stepCleanupBlobs(uploadedBlobUrls);
+    }
     throw err;
   }
 }

@@ -5,7 +5,12 @@ import type { ReelAspectRatio } from "@/lib/providers/visuals";
 import type { ImageModelKey } from "@/lib/providers/image-models";
 import { DEFAULT_CAPTION_STYLE, type CaptionStyle } from "@/lib/render/captions";
 import { recordReelVersion } from "@/lib/render/reel-versions";
-import { setStage, stepGenerateVisual, stepComposeVideo } from "@/workflows/generate-reel";
+import {
+  setStage,
+  stepGenerateVisual,
+  stepComposeVideo,
+  stepCleanupBlobs,
+} from "@/workflows/generate-reel";
 
 export type RegenerateSceneInput = {
   reelId: string;
@@ -111,6 +116,10 @@ export async function regenerateSceneWorkflow(input: RegenerateSceneInput) {
     scenes,
   } = input;
   const resolvedCaptionStyle = captionStyle ?? DEFAULT_CAPTION_STYLE;
+  // Tracks blobs uploaded this run for cleanup on failure — the swapped-out
+  // old image (targetScene.imageUrl) is deliberately excluded, since it's
+  // still live until stepUpdateSceneAndReel actually swaps it.
+  const uploadedBlobUrls: string[] = [];
 
   try {
     await setStage(jobId, "visuals");
@@ -125,6 +134,7 @@ export async function regenerateSceneWorkflow(input: RegenerateSceneInput) {
       aspectRatio,
       imageModel
     );
+    uploadedBlobUrls.push(newVisual.imageUrl);
 
     await setStage(jobId, "compose");
     const composeScenes = scenes.map((s) =>
@@ -154,6 +164,7 @@ export async function regenerateSceneWorkflow(input: RegenerateSceneInput) {
       musicUrl,
       watermark
     );
+    uploadedBlobUrls.push(videoUrl, thumbUrl);
 
     await setStage(jobId, "upload");
     await stepUpdateSceneAndReel(
@@ -171,6 +182,9 @@ export async function regenerateSceneWorkflow(input: RegenerateSceneInput) {
     return { reelId, status: "ready" as const };
   } catch (err) {
     await stepMarkSceneEditFailed(jobId, extractErrorMessage(err));
+    if (uploadedBlobUrls.length > 0) {
+      await stepCleanupBlobs(uploadedBlobUrls);
+    }
     throw err;
   }
 }

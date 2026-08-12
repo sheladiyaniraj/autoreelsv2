@@ -9,6 +9,7 @@ import {
   stepSynthesizeVoice,
   stepTranscribe,
   stepComposeVideo,
+  stepCleanupBlobs,
 } from "@/workflows/generate-reel";
 
 export type ChangeVoiceInput = {
@@ -129,10 +130,15 @@ export async function changeVoiceWorkflow(input: ChangeVoiceInput) {
     scenes,
   } = input;
   const resolvedCaptionStyle = captionStyle ?? DEFAULT_CAPTION_STYLE;
+  // Tracks blobs uploaded this run for cleanup on failure — oldAudioUrl is
+  // deliberately excluded, since it's still live until
+  // stepFinalizeVoiceChange actually swaps it.
+  const uploadedBlobUrls: string[] = [];
 
   try {
     await setStage(jobId, "voice");
     const { audioUrl } = await stepSynthesizeVoice(reelId, script, voiceName, voiceProvider);
+    uploadedBlobUrls.push(audioUrl);
 
     await setStage(jobId, "transcript");
     const { words, durationInSeconds } = await stepTranscribe(audioUrl, script);
@@ -169,6 +175,7 @@ export async function changeVoiceWorkflow(input: ChangeVoiceInput) {
       musicUrl,
       watermark
     );
+    uploadedBlobUrls.push(videoUrl, thumbUrl);
 
     await setStage(jobId, "upload");
     await stepFinalizeVoiceChange(
@@ -188,6 +195,9 @@ export async function changeVoiceWorkflow(input: ChangeVoiceInput) {
     return { reelId, status: "ready" as const };
   } catch (err) {
     await stepMarkVoiceChangeFailed(jobId, extractErrorMessage(err));
+    if (uploadedBlobUrls.length > 0) {
+      await stepCleanupBlobs(uploadedBlobUrls);
+    }
     throw err;
   }
 }
