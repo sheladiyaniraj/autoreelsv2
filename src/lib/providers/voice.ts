@@ -82,6 +82,24 @@ async function synthesizeWithSarvam(
   };
 }
 
+async function synthesizeWithOpenAI(
+  text: string,
+  voiceName: string
+): Promise<{ audio: Uint8Array; mediaType: string }> {
+  const voice = OPENAI_VOICE_BY_NAME[voiceName] ?? "alloy";
+
+  const result = await generateSpeech({
+    model: gateway.speech(OPENAI_SPEECH_MODEL),
+    text,
+    voice,
+  });
+
+  return {
+    audio: result.audio.uint8Array,
+    mediaType: result.audio.mediaType,
+  };
+}
+
 export async function synthesizeVoice({
   text,
   voiceName,
@@ -114,30 +132,42 @@ export async function synthesizeVoice({
     const voiceId =
       ELEVENLABS_VOICE_BY_NAME[voiceName] ?? ELEVENLABS_VOICE_BY_NAME.Aria;
 
-    const result = await generateSpeech({
-      model: elevenlabs.speech(
-        isGujarati ? ELEVENLABS_GUJARATI_SPEECH_MODEL : ELEVENLABS_SPEECH_MODEL
-      ),
-      text,
-      voice: voiceId,
-    });
+    try {
+      const result = await generateSpeech({
+        model: elevenlabs.speech(
+          isGujarati ? ELEVENLABS_GUJARATI_SPEECH_MODEL : ELEVENLABS_SPEECH_MODEL
+        ),
+        text,
+        voice: voiceId,
+      });
 
-    return {
-      audio: result.audio.uint8Array,
-      mediaType: result.audio.mediaType,
-    };
+      return {
+        audio: result.audio.uint8Array,
+        mediaType: result.audio.mediaType,
+      };
+    } catch (error) {
+      // ElevenLabs can go down account-wide (quota exhaustion, outage)
+      // independent of this specific request — same "don't burn the whole
+      // reel on one provider's bad day" reasoning as the Flux→nano-banana-2
+      // image fallback. Sarvam is preferred here over the OpenAI/Gateway
+      // fallback while ElevenLabs credits are being sorted out — it's the
+      // provider currently confirmed working end-to-end.
+      if (process.env.SARVAM_API_KEY) {
+        return synthesizeWithSarvam(text, voiceName, detectSarvamLanguage(text));
+      }
+      if (!isGujarati) {
+        return synthesizeWithOpenAI(text, voiceName);
+      }
+      throw error;
+    }
   }
 
-  const voice = OPENAI_VOICE_BY_NAME[voiceName] ?? "alloy";
+  // Sarvam is the default provider right now — ElevenLabs is out of quota
+  // and Sarvam is the one confirmed reliably working end-to-end. OpenAI/
+  // Gateway TTS is the last-resort fallback if Sarvam isn't configured.
+  if (process.env.SARVAM_API_KEY) {
+    return synthesizeWithSarvam(text, voiceName, detectSarvamLanguage(text));
+  }
 
-  const result = await generateSpeech({
-    model: gateway.speech(OPENAI_SPEECH_MODEL),
-    text,
-    voice,
-  });
-
-  return {
-    audio: result.audio.uint8Array,
-    mediaType: result.audio.mediaType,
-  };
+  return synthesizeWithOpenAI(text, voiceName);
 }
